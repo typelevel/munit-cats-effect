@@ -55,11 +55,12 @@ val commonSettings = Seq(
 )
 
 lazy val core = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Full)
   .settings(commonSettings)
   .settings(
     name := "munit-cats-effect",
     libraryDependencies ++= List(
-      "org.typelevel" %%% "cats-effect" % "2.2.0-RC1",
+      "org.typelevel" %%% "cats-effect" % "2.2.0-RC3",
       "org.scalameta" %%% "munit" % "0.7.10"
     )
   )
