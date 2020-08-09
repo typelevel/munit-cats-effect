@@ -21,7 +21,6 @@ import cats.syntax.flatMap._
 
 import scala.concurrent.Promise
 import scala.concurrent.duration._
-import scala.language.implicitConversions
 
 class CatsEffectFunFixturesSpec extends CatsEffectSuite with CatsEffectFunFixtures {
   val latch: Promise[Unit] = Promise[Unit]()

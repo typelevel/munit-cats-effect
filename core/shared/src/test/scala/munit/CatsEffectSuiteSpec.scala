@@ -19,7 +19,6 @@ package munit
 import cats.effect.IO
 
 import scala.concurrent.duration._
-import scala.language.implicitConversions
 
 class CatsEffectSuiteSpec extends CatsEffectSuite {
 
