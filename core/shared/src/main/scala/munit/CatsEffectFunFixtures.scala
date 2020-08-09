@@ -43,7 +43,7 @@ trait CatsEffectFunFixtures extends FunFixtures { self: CatsEffectSuite =>
 
       FunFixture.async(
         setup = { testOptions =>
-          val resourceEffect = resource.allocated
+          val resourceEffect = resource.allocated[IO, T]
           val setupEffect =
             resourceEffect
               .map {
@@ -55,7 +55,7 @@ trait CatsEffectFunFixtures extends FunFixtures { self: CatsEffectSuite =>
 
           setupEffect.unsafeToFuture()
         },
-        teardown = { argument: T =>
+        teardown = { (argument: T) =>
           teardown(argument)
             .flatMap(_ => IO.fromFuture(IO(promise.future))(munitContextShift).flatten)
             .unsafeToFuture()
