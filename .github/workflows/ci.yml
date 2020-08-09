@@ -26,7 +26,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [0.25.0, 0.26.0-RC1, 2.12.11, 2.13.2]
+        scala: [0.25.0, 0.26.0-RC1, 2.12.11, 2.13.3]
         java: [adopt@1.8]
     runs-on: ${{ matrix.os }}
     steps:
@@ -113,7 +113,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [2.13.2]
+        scala: [2.13.3]
         java: [adopt@1.8]
     runs-on: ${{ matrix.os }}
     steps:
@@ -182,10 +182,10 @@ jobs:
           name: target-${{ matrix.os }}-2.12.11-${{ matrix.java }}-target
           path: target
 
-      - name: Download target directory 'target' (2.13.2)
+      - name: Download target directory 'target' (2.13.3)
         uses: actions/download-artifact@v1
         with:
-          name: target-${{ matrix.os }}-2.13.2-${{ matrix.java }}-target
+          name: target-${{ matrix.os }}-2.13.3-${{ matrix.java }}-target
           path: target
 
       - name: Download target directory 'core/js/target' (0.25.0)
@@ -206,10 +206,10 @@ jobs:
           name: target-${{ matrix.os }}-2.12.11-${{ matrix.java }}-core_js_target
           path: core/js/target
 
-      - name: Download target directory 'core/js/target' (2.13.2)
+      - name: Download target directory 'core/js/target' (2.13.3)
         uses: actions/download-artifact@v1
         with:
-          name: target-${{ matrix.os }}-2.13.2-${{ matrix.java }}-core_js_target
+          name: target-${{ matrix.os }}-2.13.3-${{ matrix.java }}-core_js_target
           path: core/js/target
 
       - name: Download target directory 'core/jvm/target' (0.25.0)
@@ -230,10 +230,10 @@ jobs:
           name: target-${{ matrix.os }}-2.12.11-${{ matrix.java }}-core_jvm_target
           path: core/jvm/target
 
-      - name: Download target directory 'core/jvm/target' (2.13.2)
+      - name: Download target directory 'core/jvm/target' (2.13.3)
         uses: actions/download-artifact@v1
         with:
-          name: target-${{ matrix.os }}-2.13.2-${{ matrix.java }}-core_jvm_target
+          name: target-${{ matrix.os }}-2.13.3-${{ matrix.java }}-core_jvm_target
           path: core/jvm/target
 
       - name: Download target directory 'project/target'
