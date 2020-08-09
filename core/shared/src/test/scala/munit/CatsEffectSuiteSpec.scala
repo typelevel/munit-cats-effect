@@ -16,13 +16,13 @@
 
 package munit
 
-import cats.effect.IO
+import cats.effect.{IO, SyncIO}
 
 import scala.concurrent.duration._
 
 class CatsEffectSuiteSpec extends CatsEffectSuite {
 
-  test("nested fail".fail) {
+  test("nested IO fail".fail) {
     IO {
       IO.sleep(2.millis)(munitTimer)
         .flatMap { _ =>
@@ -38,7 +38,7 @@ class CatsEffectSuiteSpec extends CatsEffectSuite {
         }
     }
   }
-  test("nested success") {
+  test("nested IO success") {
     IO {
       IO.sleep(2.millis)(munitTimer)
         .flatMap { _ =>
@@ -53,5 +53,32 @@ class CatsEffectSuiteSpec extends CatsEffectSuite {
           }
         }
     }
+  }
+
+  test("nested SyncIO fail".fail) {
+    SyncIO
+      .pure(())
+      .flatMap { _ =>
+        SyncIO
+          .pure(())
+          .flatMap { _ =>
+            SyncIO
+              .pure(())
+              .map(_ => assertEquals(false, true))
+          }
+      }
+  }
+  test("nested SyncIO success") {
+    SyncIO
+      .pure(())
+      .flatMap { _ =>
+        SyncIO
+          .pure(())
+          .flatMap { _ =>
+            SyncIO
+              .pure(())
+              .map(_ => assertEquals(true, true))
+          }
+      }
   }
 }
