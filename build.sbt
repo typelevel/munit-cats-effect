@@ -49,10 +49,6 @@ lazy val root = project
 val commonSettings = Seq(
   homepage := Some(url("https://github.com/typelevel/munit-cats-effect")),
   licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
-  libraryDependencies ++= {
-    if (isDotty.value) Nil
-    else Seq(scalafixSemanticdb)
-  },
   scalafmtOnCompile := true
 )
 
@@ -70,5 +66,5 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyLibrarySettings)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
 
-addCommandAlias("fmt", """scalafixAll;scalafmtSbt;scalafmtAll""")
-addCommandAlias("fmtCheck", """scalafixAll --check;scalafmtSbtCheck;scalafmtCheckAll""")
+addCommandAlias("fmt", """scalafmtSbt;scalafmtAll""")
+addCommandAlias("fmtCheck", """scalafmtSbtCheck;scalafmtCheckAll""")
