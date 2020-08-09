@@ -39,6 +39,8 @@ ThisBuild / scmInfo := Some(
   )
 )
 
+ThisBuild / testFrameworks += new TestFramework("munit.Framework")
+
 lazy val root = project
   .in(file("."))
   .aggregate(core.jvm, core.js)
@@ -64,6 +66,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
       "org.scalameta" %%% "munit" % "0.7.10"
     )
   )
+  .settings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
   .settings(dottyLibrarySettings)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
 
