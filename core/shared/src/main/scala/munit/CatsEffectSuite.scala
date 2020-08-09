@@ -22,10 +22,10 @@ import scala.concurrent.Future
 
 abstract class CatsEffectSuite extends FunSuite {
 
-  def munitContextShift: ContextShift[IO] =
+  implicit def munitContextShift: ContextShift[IO] =
     IO.contextShift(munitExecutionContext)
 
-  def munitTimer: Timer[IO] =
+  implicit def munitTimer: Timer[IO] =
     IO.timer(munitExecutionContext)
 
   override def munitValueTransforms: List[ValueTransform] =
