@@ -46,10 +46,9 @@ trait CatsEffectFunFixtures extends FunFixtures { self: CatsEffectSuite =>
           val resourceEffect = resource.allocated[IO, T]
           val setupEffect =
             resourceEffect
-              .map {
-                case (t, release) =>
-                  promise.success(release)
-                  t
+              .map { case (t, release) =>
+                promise.success(release)
+                t
               }
               .flatTap(t => setup(testOptions, t))
 
