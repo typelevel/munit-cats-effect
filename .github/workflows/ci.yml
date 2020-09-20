@@ -79,6 +79,10 @@ jobs:
           path: ~/.sbt
           key: ${{ runner.os }}-sbt-cache-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
 
+      - run: sbt ++${{ matrix.scala }} scalafmtCheckAll
+
+      - run: sbt ++${{ matrix.scala }} scalafmtSbtCheck
+
       - name: Check that workflows are up to date
         run: sbt ++${{ matrix.scala }} githubWorkflowCheck
 

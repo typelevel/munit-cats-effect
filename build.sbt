@@ -22,6 +22,12 @@ ThisBuild / githubWorkflowEnv ++= Map(
 )
 ThisBuild / githubWorkflowTargetTags += "v*"
 
+ThisBuild / githubWorkflowBuildPreamble ++=
+  Seq(
+    WorkflowStep.Sbt(List("scalafmtCheckAll")),
+    WorkflowStep.Sbt(List("scalafmtSbtCheck"))
+  )
+
 ThisBuild / githubWorkflowPublishPreamble +=
   WorkflowStep.Run(
     List("echo $PGP_SECRET | base64 -d | gpg --import"),
