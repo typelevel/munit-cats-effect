@@ -81,4 +81,14 @@ class CatsEffectSuiteSpec extends CatsEffectSuite {
           }
       }
   }
+  test("assertIO works (successful assertion)") {
+    val io = IO.sleep(2.millis) *> IO(2)
+
+    assertIO(io, returns = 2)
+  }
+  test("assertIO works (failed assertion)".fail) {
+    val io = IO.sleep(2.millis) *> IO(2)
+
+    assertIO(io, returns = 3)
+  }
 }
