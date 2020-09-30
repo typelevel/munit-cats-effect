@@ -4,3 +4,5 @@ target
 .metals
 .bloop
 .idea
+**/metals.sbt
+.vscode
