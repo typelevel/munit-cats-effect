@@ -70,7 +70,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
   .settings(dottyLibrarySettings)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
-  .settings(libraryDependencies += "org.scalameta" %%% "munit" % "0.7.12")
+  .settings(libraryDependencies += "org.scalameta" %%% "munit" % "0.7.13")
 
 addCommandAlias("fmt", """scalafmtSbt;scalafmtAll""")
 addCommandAlias("fmtCheck", """scalafmtSbtCheck;scalafmtCheckAll""")
