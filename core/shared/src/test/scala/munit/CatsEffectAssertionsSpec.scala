@@ -19,6 +19,7 @@ package munit
 import cats.effect.IO
 import cats.syntax.all._
 import scala.concurrent.duration._
+import cats.effect.SyncIO
 
 class CatsEffectAssertionsSpec extends CatsEffectSuite {
 
@@ -79,6 +80,65 @@ class CatsEffectAssertionsSpec extends CatsEffectSuite {
     val io = IO(42)
 
     interceptMessageIO[IllegalArgumentException]("BOOM!")(io)
+  }
+
+  test("assertSyncIO works (successful assertion)") {
+    val io = SyncIO(2)
+
+    assertSyncIO(io, returns = 2)
+  }
+  test("assertSyncIO works (failed assertion)".fail) {
+    val io = SyncIO(2)
+
+    assertSyncIO(io, returns = 3)
+  }
+
+  test("interceptSyncIO works (successful assertion)") {
+    val io = (new IllegalArgumentException("BOOM!")).raiseError[SyncIO, Unit]
+
+    interceptSyncIO[IllegalArgumentException](io)
+  }
+
+  test("interceptSyncIO works (failed assertion: different exception)".fail) {
+    val io = SyncIO(fail("BOOM!"))
+
+    interceptSyncIO[IllegalArgumentException](io)
+  }
+
+  test("interceptSyncIO works (sucessful assertion on `FailException`)") {
+    val io = SyncIO(fail("BOOM!"))
+
+    interceptSyncIO[FailException](io)
+  }
+
+  test("interceptSyncIO works (failed assertion: SyncIO does not fail)".fail) {
+    val io = SyncIO(42)
+
+    interceptSyncIO[IllegalArgumentException](io)
+  }
+
+  test("interceptMessageSyncIO works (successful assertion)") {
+    val io = (new IllegalArgumentException("BOOM!")).raiseError[SyncIO, Unit]
+
+    interceptMessageSyncIO[IllegalArgumentException]("BOOM!")(io)
+  }
+
+  test("interceptMessageSyncIO works (failed assertion: different exception)".fail) {
+    val io = SyncIO(fail("BOOM!"))
+
+    interceptMessageSyncIO[IllegalArgumentException]("BOOM!")(io)
+  }
+
+  test("interceptMessageSyncIO works (failed assertion: different message)".fail) {
+    val io = SyncIO(fail("BOOM!"))
+
+    interceptMessageSyncIO[IllegalArgumentException]("BOOM!")(io)
+  }
+
+  test("interceptMessageSyncIO works (failed assertion: SyncIO does not fail)".fail) {
+    val io = SyncIO(42)
+
+    interceptMessageSyncIO[IllegalArgumentException]("BOOM!")(io)
   }
 
 }

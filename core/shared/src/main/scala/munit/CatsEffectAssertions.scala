@@ -20,6 +20,8 @@ import cats.effect.IO
 import cats.syntax.eq._
 import scala.reflect.ClassTag
 import scala.util.control.NonFatal
+import cats.effect.SyncIO
+import cats.effect.Sync
 
 trait CatsEffectAssertions { self: Assertions =>
 
@@ -66,7 +68,7 @@ trait CatsEffectAssertions { self: Assertions =>
     * }}}
     */
   def interceptIO[T <: Throwable](io: IO[Any])(implicit T: ClassTag[T], loc: Location): IO[T] =
-    io.attempt.flatMap[T](runInterceptIO(None))
+    io.attempt.flatMap[T](runInterceptF[IO, T](None))
 
   /**
     * Intercepts a `Throwable` with a certain message being thrown inside the provided `IO`.
@@ -89,28 +91,98 @@ trait CatsEffectAssertions { self: Assertions =>
   def interceptMessageIO[T <: Throwable](
       expectedExceptionMessage: String
   )(io: IO[Any])(implicit T: ClassTag[T], loc: Location): IO[T] =
-    io.attempt.flatMap[T](runInterceptIO(Some(expectedExceptionMessage)))
+    io.attempt.flatMap[T](runInterceptF[IO, T](Some(expectedExceptionMessage)))
+
+  /**
+    * Asserts that a [[SyncIO]] returns an expected value.
+    *
+    * The "returns" value (second argument) must have the same type or be a
+    * subtype of the one "contained" inside the `SyncIO` (first argument). For example:
+    * {{{
+    *   assertSyncIO(SyncIO(Option(1)), returns = Some(1)) // OK
+    *   assertSyncIO(SyncIO(Some(1)), returns = Option(1)) // Error: Option[Int] is not a subtype of Some[Int]
+    * }}}
+    *
+    * The "clue" value can be used to give extra information about the failure in case the
+    * assertion fails.
+    *
+    * @param obtained the SyncIO under testing
+    * @param returns the expected value
+    * @param clue a value that will be printed in case the assertions fails
+    */
+  def assertSyncIO[A, B](
+      obtained: SyncIO[A],
+      returns: B,
+      clue: => Any = "values are not the same"
+  )(implicit loc: Location, ev: B <:< A): SyncIO[Unit] =
+    obtained.flatMap(a => SyncIO(assertEquals(a, returns, clue)))
+
+  /**
+    * Intercepts a `Throwable` being thrown inside the provided `SyncIO`.
+    *
+    * @example
+    * {{{
+    *   val io = SyncIO.raiseError[Unit](MyException("BOOM!"))
+    *
+    *   interceptSyncIO[MyException](io)
+    * }}}
+    *
+    * or
+    *
+    * {{{
+    *   interceptSyncIO[MyException] {
+    *       SyncIO.raiseError[Unit](MyException("BOOM!"))
+    *   }
+    * }}}
+    */
+  def interceptSyncIO[T <: Throwable](
+      io: SyncIO[Any]
+  )(implicit T: ClassTag[T], loc: Location): SyncIO[T] =
+    io.attempt.flatMap[T](runInterceptF[SyncIO, T](None))
+
+  /**
+    * Intercepts a `Throwable` with a certain message being thrown inside the provided `SyncIO`.
+    *
+    * @example
+    * {{{
+    *   val io = SyncIO.raiseError[Unit](MyException("BOOM!"))
+    *
+    *   interceptSyncIO[MyException]("BOOM!")(io)
+    * }}}
+    *
+    * or
+    *
+    * {{{
+    *   interceptSyncIO[MyException] {
+    *       SyncIO.raiseError[Unit](MyException("BOOM!"))
+    *   }
+    * }}}
+    */
+  def interceptMessageSyncIO[T <: Throwable](
+      expectedExceptionMessage: String
+  )(io: SyncIO[Any])(implicit T: ClassTag[T], loc: Location): SyncIO[T] =
+    io.attempt.flatMap[T](runInterceptF[SyncIO, T](Some(expectedExceptionMessage)))
 
   /**
     * Copied from `munit.Assertions` and adapted to return `IO[T]` instead of `T`.
     */
-  private def runInterceptIO[T <: Throwable](
+  private def runInterceptF[F[_]: Sync, T <: Throwable](
       expectedExceptionMessage: Option[String]
-  )(implicit T: ClassTag[T], loc: Location): Either[Throwable, Any] => IO[T] = {
+  )(implicit T: ClassTag[T], loc: Location): Either[Throwable, Any] => F[T] = {
     case Right(value) =>
-      IO {
+      Sync[F].delay {
         fail(
           s"expected exception of type '${T.runtimeClass.getName()}' but body evaluated successfully",
           clues(value)
         )
       }
     case Left(e: FailException) if !T.runtimeClass.isAssignableFrom(e.getClass()) =>
-      IO.raiseError[T](e)
+      Sync[F].raiseError[T](e)
     case Left(NonFatal(e: T))
         if expectedExceptionMessage.map(_ === e.getMessage()).getOrElse(true) =>
-      IO(e)
+      Sync[F].pure(e)
     case Left(NonFatal(e: T)) =>
-      IO.raiseError[T] {
+      Sync[F].raiseError[T] {
         val obtained = e.getClass().getName()
 
         new FailException(
@@ -122,7 +194,7 @@ trait CatsEffectAssertions { self: Assertions =>
         )
       }
     case Left(NonFatal(e)) =>
-      IO.raiseError[T] {
+      Sync[F].raiseError[T] {
         val obtained = e.getClass().getName()
         val expected = T.runtimeClass.getName()
 
