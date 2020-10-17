@@ -17,6 +17,7 @@
 package munit
 
 import cats.effect.IO
+import cats.syntax.all._
 import scala.concurrent.duration._
 
 class CatsEffectAssertionsSpec extends CatsEffectSuite {
@@ -30,6 +31,54 @@ class CatsEffectAssertionsSpec extends CatsEffectSuite {
     val io = IO.sleep(2.millis) *> IO(2)
 
     assertIO(io, returns = 3)
+  }
+
+  test("interceptIO works (successful assertion)") {
+    val io = (new IllegalArgumentException("BOOM!")).raiseError[IO, Unit]
+
+    interceptIO[IllegalArgumentException](io)
+  }
+
+  test("interceptIO works (failed assertion: different exception)".fail) {
+    val io = IO(fail("BOOM!"))
+
+    interceptIO[IllegalArgumentException](io)
+  }
+
+  test("interceptIO works (sucessful assertion on `FailException`)") {
+    val io = IO(fail("BOOM!"))
+
+    interceptIO[FailException](io)
+  }
+
+  test("interceptIO works (failed assertion: IO does not fail)".fail) {
+    val io = IO(42)
+
+    interceptIO[IllegalArgumentException](io)
+  }
+
+  test("interceptMessageIO works (successful assertion)") {
+    val io = (new IllegalArgumentException("BOOM!")).raiseError[IO, Unit]
+
+    interceptMessageIO[IllegalArgumentException]("BOOM!")(io)
+  }
+
+  test("interceptMessageIO works (failed assertion: different exception)".fail) {
+    val io = IO(fail("BOOM!"))
+
+    interceptMessageIO[IllegalArgumentException]("BOOM!")(io)
+  }
+
+  test("interceptMessageIO works (failed assertion: different message)".fail) {
+    val io = IO(fail("BOOM!"))
+
+    interceptMessageIO[IllegalArgumentException]("BOOM!")(io)
+  }
+
+  test("interceptMessageIO works (failed assertion: IO does not fail)".fail) {
+    val io = IO(42)
+
+    interceptMessageIO[IllegalArgumentException]("BOOM!")(io)
   }
 
 }
