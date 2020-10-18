@@ -61,25 +61,25 @@ class CatsEffectAssertionsSyntaxSpec extends CatsEffectSuite {
   test("interceptMessage (for IO) works (successful assertion)") {
     val io = (new IllegalArgumentException("BOOM!")).raiseError[IO, Unit]
 
-    io interceptMessage [IllegalArgumentException] "BOOM!"
+    io.interceptMessage[IllegalArgumentException]("BOOM!")
   }
 
   test("interceptMessage (for IO) works (failed assertion: different exception)".fail) {
     val io = IO(fail("BOOM!"))
 
-    io interceptMessage [IllegalArgumentException] "BOOM!"
+    io.interceptMessage[IllegalArgumentException]("BOOM!")
   }
 
   test("interceptMessage (for IO) works (failed assertion: different message)".fail) {
     val io = IO(fail("BOOM!"))
 
-    io interceptMessage [IllegalArgumentException] "BOOM!"
+    io.interceptMessage[IllegalArgumentException]("BOOM!")
   }
 
   test("interceptMessage (for IO) works (failed assertion: IO does not fail)".fail) {
     val io = IO(42)
 
-    io interceptMessage [IllegalArgumentException] "BOOM!"
+    io.interceptMessage[IllegalArgumentException]("BOOM!")
   }
 
   test("assertEquals (for SyncIO) works (successful assertion)") {
@@ -120,25 +120,25 @@ class CatsEffectAssertionsSyntaxSpec extends CatsEffectSuite {
   test("interceptMessage (for SyncIO) works (successful assertion)") {
     val io = (new IllegalArgumentException("BOOM!")).raiseError[SyncIO, Unit]
 
-    io interceptMessage [IllegalArgumentException] "BOOM!"
+    io.interceptMessage[IllegalArgumentException]("BOOM!")
   }
 
   test("interceptMessage (for SyncIO) works (failed assertion: different exception)".fail) {
     val io = SyncIO(fail("BOOM!"))
 
-    io interceptMessage [IllegalArgumentException] "BOOM!"
+    io.interceptMessage[IllegalArgumentException]("BOOM!")
   }
 
   test("interceptMessage (for SyncIO) works (failed assertion: different message)".fail) {
     val io = SyncIO(fail("BOOM!"))
 
-    io interceptMessage [IllegalArgumentException] "BOOM!"
+    io.interceptMessage[IllegalArgumentException]("BOOM!")
   }
 
   test("interceptMessage (for SyncIO) works (failed assertion: SyncIO does not fail)".fail) {
     val io = SyncIO(42)
 
-    io interceptMessage [IllegalArgumentException] "BOOM!"
+    io.interceptMessage[IllegalArgumentException]("BOOM!")
   }
 
 }
