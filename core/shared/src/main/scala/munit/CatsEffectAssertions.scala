@@ -207,6 +207,114 @@ trait CatsEffectAssertions { self: Assertions =>
       }
   }
 
+  implicit class MUnitCatsAssertionsForIOOps[A](io: IO[A]) {
+
+    /**
+      * Asserts that this effect returns an expected value.
+      *
+      * The "expected" value (second argument) must have the same type or be a
+      * subtype of the one "contained" inside the effect. For example:
+      * {{{
+      *   IO(Option(1)).assertEquals(Some(1)) // OK
+      *   IO(Some(1)).assertEquals(Option(1)) // Error: Option[Int] is not a subtype of Some[Int]
+      * }}}
+      *
+      * The "clue" value can be used to give extra information about the failure in case the
+      * assertion fails.
+      *
+      * @param expected the expected value
+      * @param clue a value that will be printed in case the assertions fails
+      */
+    def assertEquals[B](
+        expected: B,
+        clue: => Any = "values are not the same"
+    )(implicit loc: Location, ev: B <:< A): IO[Unit] =
+      assertIO(io, expected, clue)
+
+    /**
+      * Intercepts a `Throwable` being thrown inside this effect.
+      *
+      * @example
+      * {{{
+      *   val io = IO.raiseError[Unit](MyException("BOOM!"))
+      *
+      *   io.intercept[MyException]
+      * }}}
+      */
+    def intercept[T <: Throwable](implicit T: ClassTag[T], loc: Location): IO[T] =
+      interceptIO[T](io)
+
+    /**
+      * Intercepts a `Throwable` with a certain message being thrown inside this effect.
+      *
+      * @example
+      * {{{
+      *   val io = IO.raiseError[Unit](MyException("BOOM!"))
+      *
+      *   io.intercept[MyException]("BOOM!")
+      * }}}
+      */
+    def interceptMessage[T <: Throwable](
+        expectedExceptionMessage: String
+    )(implicit T: ClassTag[T], loc: Location): IO[T] =
+      interceptMessageIO[T](expectedExceptionMessage)(io)
+
+  }
+
+  implicit class MUnitCatsAssertionsForSyncIOOps[A](io: SyncIO[A]) {
+
+    /**
+      * Asserts that this effect returns an expected value.
+      *
+      * The "expected" value (second argument) must have the same type or be a
+      * subtype of the one "contained" inside the effect. For example:
+      * {{{
+      *   SyncIO(Option(1)).assertEquals(Some(1)) // OK
+      *   SyncIO(Some(1)).assertEquals(Option(1)) // Error: Option[Int] is not a subtype of Some[Int]
+      * }}}
+      *
+      * The "clue" value can be used to give extra information about the failure in case the
+      * assertion fails.
+      *
+      * @param expected the expected value
+      * @param clue a value that will be printed in case the assertions fails
+      */
+    def assertEquals[B](
+        expected: B,
+        clue: => Any = "values are not the same"
+    )(implicit loc: Location, ev: B <:< A): SyncIO[Unit] =
+      assertSyncIO(io, expected, clue)
+
+    /**
+      * Intercepts a `Throwable` being thrown inside this effect.
+      *
+      * @example
+      * {{{
+      *   val io = SyncIO.raiseError[Unit](MyException("BOOM!"))
+      *
+      *   io.intercept[MyException]
+      * }}}
+      */
+    def intercept[T <: Throwable](implicit T: ClassTag[T], loc: Location): SyncIO[T] =
+      interceptSyncIO[T](io)
+
+    /**
+      * Intercepts a `Throwable` with a certain message being thrown inside this effect.
+      *
+      * @example
+      * {{{
+      *   val io = SyncIO.raiseError[Unit](MyException("BOOM!"))
+      *
+      *   io.intercept[MyException]("BOOM!")
+      * }}}
+      */
+    def interceptMessage[T <: Throwable](
+        expectedExceptionMessage: String
+    )(implicit T: ClassTag[T], loc: Location): SyncIO[T] =
+      interceptMessageSyncIO[T](expectedExceptionMessage)(io)
+
+  }
+
 }
 
 object CatsEffectAssertions extends Assertions with CatsEffectAssertions
