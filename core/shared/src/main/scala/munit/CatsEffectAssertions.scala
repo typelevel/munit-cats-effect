@@ -25,8 +25,7 @@ import cats.effect.Sync
 
 trait CatsEffectAssertions { self: Assertions =>
 
-  /**
-    * Asserts that an [[IO]] returns an expected value.
+  /** Asserts that an [[IO]] returns an expected value.
     *
     * The "returns" value (second argument) must have the same type or be a
     * subtype of the one "contained" inside the `IO` (first argument). For example:
@@ -49,8 +48,7 @@ trait CatsEffectAssertions { self: Assertions =>
   )(implicit loc: Location, ev: B <:< A): IO[Unit] =
     obtained.flatMap(a => IO(assertEquals(a, returns, clue)))
 
-  /**
-    * Intercepts a `Throwable` being thrown inside the provided `IO`.
+  /** Intercepts a `Throwable` being thrown inside the provided `IO`.
     *
     * @example
     * {{{
@@ -70,8 +68,7 @@ trait CatsEffectAssertions { self: Assertions =>
   def interceptIO[T <: Throwable](io: IO[Any])(implicit T: ClassTag[T], loc: Location): IO[T] =
     io.attempt.flatMap[T](runInterceptF[IO, T](None))
 
-  /**
-    * Intercepts a `Throwable` with a certain message being thrown inside the provided `IO`.
+  /** Intercepts a `Throwable` with a certain message being thrown inside the provided `IO`.
     *
     * @example
     * {{{
@@ -93,8 +90,7 @@ trait CatsEffectAssertions { self: Assertions =>
   )(io: IO[Any])(implicit T: ClassTag[T], loc: Location): IO[T] =
     io.attempt.flatMap[T](runInterceptF[IO, T](Some(expectedExceptionMessage)))
 
-  /**
-    * Asserts that a [[SyncIO]] returns an expected value.
+  /** Asserts that a [[SyncIO]] returns an expected value.
     *
     * The "returns" value (second argument) must have the same type or be a
     * subtype of the one "contained" inside the `SyncIO` (first argument). For example:
@@ -117,8 +113,7 @@ trait CatsEffectAssertions { self: Assertions =>
   )(implicit loc: Location, ev: B <:< A): SyncIO[Unit] =
     obtained.flatMap(a => SyncIO(assertEquals(a, returns, clue)))
 
-  /**
-    * Intercepts a `Throwable` being thrown inside the provided `SyncIO`.
+  /** Intercepts a `Throwable` being thrown inside the provided `SyncIO`.
     *
     * @example
     * {{{
@@ -140,8 +135,7 @@ trait CatsEffectAssertions { self: Assertions =>
   )(implicit T: ClassTag[T], loc: Location): SyncIO[T] =
     io.attempt.flatMap[T](runInterceptF[SyncIO, T](None))
 
-  /**
-    * Intercepts a `Throwable` with a certain message being thrown inside the provided `SyncIO`.
+  /** Intercepts a `Throwable` with a certain message being thrown inside the provided `SyncIO`.
     *
     * @example
     * {{{
@@ -163,8 +157,7 @@ trait CatsEffectAssertions { self: Assertions =>
   )(io: SyncIO[Any])(implicit T: ClassTag[T], loc: Location): SyncIO[T] =
     io.attempt.flatMap[T](runInterceptF[SyncIO, T](Some(expectedExceptionMessage)))
 
-  /**
-    * Copied from `munit.Assertions` and adapted to return `IO[T]` instead of `T`.
+  /** Copied from `munit.Assertions` and adapted to return `IO[T]` instead of `T`.
     */
   private def runInterceptF[F[_]: Sync, T <: Throwable](
       expectedExceptionMessage: Option[String]
@@ -209,8 +202,7 @@ trait CatsEffectAssertions { self: Assertions =>
 
   implicit class MUnitCatsAssertionsForIOOps[A](io: IO[A]) {
 
-    /**
-      * Asserts that this effect returns an expected value.
+    /** Asserts that this effect returns an expected value.
       *
       * The "expected" value (second argument) must have the same type or be a
       * subtype of the one "contained" inside the effect. For example:
@@ -231,8 +223,7 @@ trait CatsEffectAssertions { self: Assertions =>
     )(implicit loc: Location, ev: B <:< A): IO[Unit] =
       assertIO(io, expected, clue)
 
-    /**
-      * Intercepts a `Throwable` being thrown inside this effect.
+    /** Intercepts a `Throwable` being thrown inside this effect.
       *
       * @example
       * {{{
@@ -244,8 +235,7 @@ trait CatsEffectAssertions { self: Assertions =>
     def intercept[T <: Throwable](implicit T: ClassTag[T], loc: Location): IO[T] =
       interceptIO[T](io)
 
-    /**
-      * Intercepts a `Throwable` with a certain message being thrown inside this effect.
+    /** Intercepts a `Throwable` with a certain message being thrown inside this effect.
       *
       * @example
       * {{{
@@ -263,8 +253,7 @@ trait CatsEffectAssertions { self: Assertions =>
 
   implicit class MUnitCatsAssertionsForSyncIOOps[A](io: SyncIO[A]) {
 
-    /**
-      * Asserts that this effect returns an expected value.
+    /** Asserts that this effect returns an expected value.
       *
       * The "expected" value (second argument) must have the same type or be a
       * subtype of the one "contained" inside the effect. For example:
@@ -285,8 +274,7 @@ trait CatsEffectAssertions { self: Assertions =>
     )(implicit loc: Location, ev: B <:< A): SyncIO[Unit] =
       assertSyncIO(io, expected, clue)
 
-    /**
-      * Intercepts a `Throwable` being thrown inside this effect.
+    /** Intercepts a `Throwable` being thrown inside this effect.
       *
       * @example
       * {{{
@@ -298,8 +286,7 @@ trait CatsEffectAssertions { self: Assertions =>
     def intercept[T <: Throwable](implicit T: ClassTag[T], loc: Location): SyncIO[T] =
       interceptSyncIO[T](io)
 
-    /**
-      * Intercepts a `Throwable` with a certain message being thrown inside this effect.
+    /** Intercepts a `Throwable` with a certain message being thrown inside this effect.
       *
       * @example
       * {{{
