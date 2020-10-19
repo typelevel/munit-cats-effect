@@ -9,7 +9,7 @@ ThisBuild / organizationName := "Typelevel"
 ThisBuild / publishGithubUser := "milanvdm"
 ThisBuild / publishFullName := "Milan van der Meer"
 
-ThisBuild / crossScalaVersions := List("0.26.0", "0.27.0-RC1", "2.12.11", "2.13.3")
+ThisBuild / crossScalaVersions := List("0.27.0-RC1", "2.12.11", "2.13.3")
 
 ThisBuild / githubWorkflowPublishTargetBranches := Seq(
   RefPredicate.Equals(Ref.Branch("ce2")),
