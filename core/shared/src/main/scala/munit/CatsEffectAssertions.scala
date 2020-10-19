@@ -25,7 +25,7 @@ import cats.effect.Sync
 
 trait CatsEffectAssertions { self: Assertions =>
 
-  /** Asserts that an [[IO]] returns an expected value.
+  /** Asserts that an `IO` returns an expected value.
     *
     * The "returns" value (second argument) must have the same type or be a
     * subtype of the one "contained" inside the `IO` (first argument). For example:
@@ -90,7 +90,7 @@ trait CatsEffectAssertions { self: Assertions =>
   )(io: IO[Any])(implicit T: ClassTag[T], loc: Location): IO[T] =
     io.attempt.flatMap[T](runInterceptF[IO, T](Some(expectedExceptionMessage)))
 
-  /** Asserts that a [[SyncIO]] returns an expected value.
+  /** Asserts that a `SyncIO` returns an expected value.
     *
     * The "returns" value (second argument) must have the same type or be a
     * subtype of the one "contained" inside the `SyncIO` (first argument). For example:
