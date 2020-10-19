@@ -62,7 +62,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
   .settings(commonSettings)
   .settings(
-    name := "munit-cats-effect",
+    name := "munit-cats-effect-2",
     libraryDependencies ++= List(
       "org.typelevel" %%% "cats-effect" % "2.2.0"
     )
