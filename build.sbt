@@ -63,9 +63,9 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
   .settings(commonSettings)
   .settings(
-    name := "munit-cats-effect-2",
+    name := "munit-cats-effect-3",
     libraryDependencies ++= List(
-      "org.typelevel" %%% "cats-effect" % "2.2.0"
+      "org.typelevel" %%% "cats-effect" % "3.0-d5a2213"
     )
   )
   .settings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))

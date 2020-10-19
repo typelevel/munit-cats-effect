@@ -56,7 +56,7 @@ trait CatsEffectFunFixtures extends FunFixtures { self: CatsEffectSuite =>
         },
         teardown = { (argument: T) =>
           teardown(argument)
-            .flatMap(_ => IO.fromFuture(IO(promise.future))(munitContextShift).flatten)
+            .flatMap(_ => IO.fromFuture(IO(promise.future)).flatten)
             .unsafeToFuture()
         }
       )
