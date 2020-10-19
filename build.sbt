@@ -64,14 +64,16 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(commonSettings)
   .settings(
     name := "munit-cats-effect-3",
-    libraryDependencies ++= List(
-      "org.typelevel" %%% "cats-effect" % "3.0-d5a2213"
-    )
   )
   .settings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
   .settings(dottyLibrarySettings)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
-  .settings(libraryDependencies += "org.scalameta" %%% "munit" % "0.7.14")
+  .settings(
+    libraryDependencies ++= Seq(
+      "org.scalameta" %%% "munit" % "0.7.14",
+      "org.typelevel" %%% "cats-effect" % "3.0-d5a2213"
+    )
+  )
   .jsSettings(crossScalaVersions := crossScalaVersions.value.filterNot(_.startsWith("0.")))
 
 addCommandAlias("fmt", """scalafmtSbt;scalafmtAll""")
