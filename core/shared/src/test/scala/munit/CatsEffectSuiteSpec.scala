@@ -24,13 +24,13 @@ class CatsEffectSuiteSpec extends CatsEffectSuite {
 
   test("nested IO fail".fail) {
     IO {
-      IO.sleep(2.millis)(munitTimer)
+      IO.sleep(2.millis)
         .flatMap { _ =>
           IO {
-            IO.sleep(2.millis)(munitTimer)
+            IO.sleep(2.millis)
               .flatMap { _ =>
                 IO {
-                  IO.sleep(2.millis)(munitTimer)
+                  IO.sleep(2.millis)
                     .map(_ => assertEquals(false, true))
                 }
               }
@@ -40,13 +40,13 @@ class CatsEffectSuiteSpec extends CatsEffectSuite {
   }
   test("nested IO success") {
     IO {
-      IO.sleep(2.millis)(munitTimer)
+      IO.sleep(2.millis)
         .flatMap { _ =>
           IO {
-            IO.sleep(2.millis)(munitTimer)
+            IO.sleep(2.millis)
               .flatMap { _ =>
                 IO {
-                  IO.sleep(2.millis)(munitTimer)
+                  IO.sleep(2.millis)
                     .map(_ => assertEquals(true, true))
                 }
               }

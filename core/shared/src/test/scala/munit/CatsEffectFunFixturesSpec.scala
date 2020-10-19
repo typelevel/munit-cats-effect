@@ -70,7 +70,7 @@ class CatsEffectFunFixturesSpec extends CatsEffectSuite with CatsEffectFunFixtur
     // Simulate some work here, which increases the certainty that this test
     // will fail by design and not by lucky scheduling if the happens-before
     // relationship between the test and teardown is removed.
-    IO.sleep(50.millis)(munitTimer).flatTap { _ =>
+    IO.sleep(50.millis).flatTap { _ =>
       IO {
         completedFromTest = Some(latch.trySuccess(()))
       }
