@@ -18,3 +18,35 @@ libraryDependencies += "org.typelevel" %%% "munit-cats-effect-3" % "<version>" %
 
 Builds are available for Scala 2.12, 2.13, and 3 for both the JVM and Scala.js.
 
+## Getting Started
+
+The `munit.CatsEffectSuite` trait provides the ability to write tests that return `IO` and `SyncIO` values without needing to call any unsafe methods (e.g. `unsafeRunSync()`).
+
+```scala
+import cats.effect.{IO, SyncIO}
+import munit.CatsEffectSuite
+
+class ExampleSuite extends CatsEffectSuite {
+
+  test("tests can return IO[Unit] with assertions expressed via a map") {
+    IO(42).map(it => assertEquals(it, 42))
+  }
+
+  test("alternatively, asertions can be written via assertIO") {
+    assertIO(IO(42), 42)
+  }
+
+  test("or via assertEquals syntax") {
+    IO(42).assertEquals(42)
+  }
+
+  test("SyncIO works too") {
+    SyncIO(42).assertEquals(42)
+  }
+}
+```
+
+There are more assertion functions like `interceptIO` and `interceptMessageIO` as well as syntax versions `intercept` and `interceptMessage`. See the `CatsEffectAssertions` trait for full details.
+
+The `CatsEffectFunFixtures` trait provides support for using a `Resource[IO, A]` as an munit fixture.
+
