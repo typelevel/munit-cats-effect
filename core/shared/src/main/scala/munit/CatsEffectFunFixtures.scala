@@ -23,18 +23,18 @@ import scala.concurrent.Promise
 
 trait CatsEffectFunFixtures extends FunFixtures { self: CatsEffectSuite =>
 
-  object CatsEffectFixture {
+  object ResourceFixture {
 
-    def fromResource[T](
+    def apply[T](
         resource: Resource[IO, T]
     ): FunFixture[T] =
-      fromResource(
+      apply(
         resource,
-        (_, _) => IO.pure(()),
-        _ => IO.pure(())
+        (_, _) => IO.unit,
+        _ => IO.unit
       )
 
-    def fromResource[T](
+    def apply[T](
         resource: Resource[IO, T],
         setup: (TestOptions, T) => IO[Unit],
         teardown: T => IO[Unit]

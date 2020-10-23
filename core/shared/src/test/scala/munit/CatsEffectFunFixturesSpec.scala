@@ -31,7 +31,7 @@ class CatsEffectFunFixturesSpec extends CatsEffectSuite with CatsEffectFunFixtur
   var completedFromResourceRelease: Option[Boolean] = None
 
   val latchOnTeardown: FunFixture[String] =
-    CatsEffectFixture.fromResource[String](
+    ResourceFixture[String](
       resource = Resource.make[IO, String](
         IO {
           completedFromResourceAcquire = Some(true)
