@@ -71,7 +71,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.14",
-      "org.typelevel" %%% "cats-effect" % "3.0-d5a2213"
+      "org.typelevel" %%% "cats-effect" % "3.0.0-M2"
     )
   )
   .jsSettings(crossScalaVersions := crossScalaVersions.value.filterNot(_.startsWith("0.")))
