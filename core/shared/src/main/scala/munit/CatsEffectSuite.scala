@@ -21,7 +21,10 @@ import cats.effect.unsafe.IORuntime
 
 import scala.concurrent.Future
 
-abstract class CatsEffectSuite extends FunSuite with CatsEffectAssertions {
+abstract class CatsEffectSuite
+    extends FunSuite
+    with CatsEffectAssertions
+    with CatsEffectFunFixtures {
 
   implicit val ioRuntime: IORuntime = IORuntime.global
 
