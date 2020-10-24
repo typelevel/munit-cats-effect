@@ -73,6 +73,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
       "org.typelevel" %%% "cats-effect" % "3.0.0-M2"
     )
   )
+  .jsSettings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
   .jsSettings(crossScalaVersions := crossScalaVersions.value.filterNot(_.startsWith("0.")))
 
 addCommandAlias("fmt", """scalafmtSbt;scalafmtAll""")

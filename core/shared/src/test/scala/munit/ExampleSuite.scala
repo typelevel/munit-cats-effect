@@ -40,6 +40,6 @@ class ExampleSuite extends CatsEffectSuite {
   val dispatcher = ResourceFixture(Dispatcher[IO])
 
   dispatcher.test("resources can be lifted to munit fixtures") { dsp =>
-    assertEquals(dsp.unsafeRunSync(IO(42)), 42)
+    dsp.unsafeRunAndForget(IO(42))
   }
 }
