@@ -20,7 +20,10 @@ import cats.effect.{ContextShift, IO, SyncIO, Timer}
 
 import scala.concurrent.Future
 
-abstract class CatsEffectSuite extends FunSuite with CatsEffectAssertions {
+abstract class CatsEffectSuite
+    extends FunSuite
+    with CatsEffectAssertions
+    with CatsEffectFunFixtures {
 
   implicit def munitContextShift: ContextShift[IO] =
     IO.contextShift(munitExecutionContext)
