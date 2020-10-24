@@ -43,10 +43,16 @@ class ExampleSuite extends CatsEffectSuite {
   test("SyncIO works too") {
     SyncIO(42).assertEquals(42)
   }
+
+  import cats.effect.std.Dispatcher
+
+  val dispatcher = ResourceFixture(Dispatcher[IO])
+
+  dispatcher.test("resources can be lifted to munit fixtures") { dsp =>
+    assertEquals(dsp.unsafeRunSync(IO(42)), 42)
+  }
 }
 ```
 
 There are more assertion functions like `interceptIO` and `interceptMessageIO` as well as syntax versions `intercept` and `interceptMessage`. See the `CatsEffectAssertions` trait for full details.
-
-The `CatsEffectFunFixtures` trait provides support for using a `Resource[IO, A]` as an munit fixture.
 

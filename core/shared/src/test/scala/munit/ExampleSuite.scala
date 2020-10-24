@@ -34,4 +34,12 @@ class ExampleSuite extends CatsEffectSuite {
   test("SyncIO works too") {
     SyncIO(42).assertEquals(42)
   }
+
+  import cats.effect.std.Dispatcher
+
+  val dispatcher = ResourceFixture(Dispatcher[IO])
+
+  dispatcher.test("resources can be lifted to munit fixtures") { dsp =>
+    assertEquals(dsp.unsafeRunSync(IO(42)), 42)
+  }
 }

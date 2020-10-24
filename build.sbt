@@ -65,7 +65,6 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(
     name := "munit-cats-effect-3"
   )
-  .settings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
   .settings(dottyLibrarySettings)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
