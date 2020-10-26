@@ -45,24 +45,23 @@ ThisBuild / scmInfo := Some(
   )
 )
 
+ThisBuild / licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
+
+ThisBuild / scalafmtOnCompile := true
+
 ThisBuild / testFrameworks += new TestFramework("munit.Framework")
 
 lazy val root = project
   .in(file("."))
-  .aggregate(core.jvm, core.js)
+  .aggregate(ce3.jvm, ce3.js, ce2.jvm, ce2.js)
   .settings(noPublishSettings)
 
-val commonSettings = Seq(
-  homepage := Some(url("https://github.com/typelevel/munit-cats-effect")),
-  licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
-  scalafmtOnCompile := true
-)
-
-lazy val core = crossProject(JSPlatform, JVMPlatform)
+lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
-  .settings(commonSettings)
   .settings(
-    name := "munit-cats-effect-3"
+    name := "munit-cats-effect-3",
+    Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/main/scala",
+    Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/test/scala"
   )
   .settings(dottyLibrarySettings)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
@@ -71,6 +70,22 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
       "org.scalameta" %%% "munit" % "0.7.14",
       "org.typelevel" %%% "cats-effect" % "3.0.0-M2"
     )
+  )
+  .jsSettings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
+  .jsSettings(crossScalaVersions := crossScalaVersions.value.filterNot(_.startsWith("0.")))
+
+lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Full)
+  .settings(
+    name := "munit-cats-effect-2",
+    libraryDependencies += "org.typelevel" %%% "cats-effect" % "2.2.0",
+    Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/main/scala",
+    Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/test/scala"
+  )
+  .settings(dottyLibrarySettings)
+  .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
+  .settings(
+    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.14"
   )
   .jsSettings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
   .jsSettings(crossScalaVersions := crossScalaVersions.value.filterNot(_.startsWith("0.")))
