@@ -79,16 +79,14 @@ lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
   .settings(
     name := "munit-cats-effect-2",
+    libraryDependencies += "org.typelevel" %%% "cats-effect" % "2.2.0",
     Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/main/scala",
     Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/test/scala"
   )
   .settings(dottyLibrarySettings)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
-    libraryDependencies ++= Seq(
-      "org.scalameta" %%% "munit" % "0.7.14",
-      "org.typelevel" %%% "cats-effect" % "2.2.0"
-    )
+    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.14"
   )
   .jsSettings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
   .jsSettings(crossScalaVersions := crossScalaVersions.value.filterNot(_.startsWith("0.")))
