@@ -80,7 +80,6 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
 
 lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
-  .disablePlugins(MimaPlugin)
   .settings(
     name := "munit-cats-effect-2",
     libraryDependencies += "org.typelevel" %%% "cats-effect" % "2.2.0",
@@ -90,7 +89,8 @@ lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyLibrarySettings)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
-    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.14"
+    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.14",
+    mimaPreviousArtifacts := Set.empty
   )
   .jsSettings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
   .jsSettings(crossScalaVersions := crossScalaVersions.value.filterNot(_.startsWith("0.")))
