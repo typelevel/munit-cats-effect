@@ -51,6 +51,10 @@ ThisBuild / scalafmtOnCompile := true
 
 ThisBuild / testFrameworks += new TestFramework("munit.Framework")
 
+ThisBuild / versionIntroduced := Map(
+  "0.27.0-RC1" -> "1.0.0"
+)
+
 lazy val root = project
   .in(file("."))
   .aggregate(ce3.jvm, ce3.js, ce2.jvm, ce2.js)
@@ -58,7 +62,6 @@ lazy val root = project
 
 lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
-  .disablePlugins(MimaPlugin)
   .settings(
     name := "munit-cats-effect-3",
     Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/main/scala",
