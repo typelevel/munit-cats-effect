@@ -12,8 +12,7 @@ ThisBuild / publishFullName := "Milan van der Meer"
 ThisBuild / crossScalaVersions := List("0.27.0-RC1", "2.12.11", "2.13.3")
 
 ThisBuild / githubWorkflowPublishTargetBranches := Seq(
-  RefPredicate.Equals(Ref.Branch("ce2")),
-  RefPredicate.Equals(Ref.Branch("ce3")),
+  RefPredicate.Equals(Ref.Branch("main")),
   RefPredicate.StartsWith(Ref.Tag("v"))
 )
 ThisBuild / githubWorkflowEnv ++= Map(
