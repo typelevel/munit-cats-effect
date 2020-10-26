@@ -58,6 +58,7 @@ lazy val root = project
 
 lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
+  .disablePlugins(MimaPlugin)
   .settings(
     name := "munit-cats-effect-3",
     Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/main/scala",
@@ -76,6 +77,7 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
 
 lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
+  .disablePlugins(MimaPlugin)
   .settings(
     name := "munit-cats-effect-2",
     libraryDependencies += "org.typelevel" %%% "cats-effect" % "2.2.0",
