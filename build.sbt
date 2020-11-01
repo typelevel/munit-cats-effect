@@ -71,7 +71,7 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= Seq(
-      "org.scalameta" %%% "munit" % "0.7.14",
+      "org.scalameta" %%% "munit" % "0.7.15",
       "org.typelevel" %%% "cats-effect" % "3.0.0-M2"
     )
   )
@@ -89,7 +89,7 @@ lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyLibrarySettings)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
-    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.14",
+    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.15",
     mimaPreviousArtifacts := Set.empty
   )
   .jsSettings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
