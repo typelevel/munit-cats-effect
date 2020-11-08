@@ -9,7 +9,7 @@ ThisBuild / organizationName := "Typelevel"
 ThisBuild / publishGithubUser := "milanvdm"
 ThisBuild / publishFullName := "Milan van der Meer"
 
-ThisBuild / crossScalaVersions := List("0.27.0-RC1", "2.12.11", "2.13.3")
+ThisBuild / crossScalaVersions := List("3.0.0-M1", "0.27.0-RC1", "2.12.11", "2.13.3")
 
 ThisBuild / githubWorkflowPublishTargetBranches := Seq(
   RefPredicate.Equals(Ref.Branch("main")),
@@ -72,28 +72,31 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
   .settings(
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.16",
-      "org.typelevel" %%% "cats-effect" % "3.0.0-M2"
-    )
+      "org.typelevel" %%% "cats-effect" % "3.0.0-M3"
+    ),
+    mimaPreviousArtifacts := Set.empty
   )
   .jsSettings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
-  .jsSettings(crossScalaVersions := crossScalaVersions.value.filterNot(_.startsWith("0.")))
+  .jsSettings(crossScalaVersions := crossScalaVersions.value.filter(_.startsWith("2.")))
 
 lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
   .settings(
     name := "munit-cats-effect-2",
-    libraryDependencies += "org.typelevel" %%% "cats-effect" % "2.2.0",
     Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/main/scala",
     Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/test/scala"
   )
   .settings(dottyLibrarySettings)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
-    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.16",
+    libraryDependencies ++= Seq(
+      "org.scalameta" %%% "munit" % "0.7.16",
+      "org.typelevel" %%% "cats-effect" % "2.3.0-M1"
+    ),
     mimaPreviousArtifacts := Set.empty
   )
   .jsSettings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
-  .jsSettings(crossScalaVersions := crossScalaVersions.value.filterNot(_.startsWith("0.")))
+  .jsSettings(crossScalaVersions := crossScalaVersions.value.filter(_.startsWith("2.")))
 
 addCommandAlias("fmt", """scalafmtSbt;scalafmtAll""")
 addCommandAlias("fmtCheck", """scalafmtSbtCheck;scalafmtCheckAll""")
