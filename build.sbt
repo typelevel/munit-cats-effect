@@ -73,7 +73,8 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.16",
       "org.typelevel" %%% "cats-effect" % "3.0.0-M3"
-    )
+    ),
+    mimaPreviousArtifacts := Set.empty
   )
   .jsSettings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
   .jsSettings(crossScalaVersions := crossScalaVersions.value.filter(_.startsWith("2.")))
