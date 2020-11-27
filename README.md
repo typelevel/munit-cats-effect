@@ -7,13 +7,13 @@ Integration library for [MUnit](https://scalameta.org/munit/) and [cats-effect](
 Cats Effect 2 integration is provided via:
 
 ```scala
-libraryDependencies += "org.typelevel" %%% "munit-cats-effect-2" % "0.7.0" % "test"
+libraryDependencies += "org.typelevel" %%% "munit-cats-effect-2" % "0.10.0" % "test"
 ```
 
 Cats Effect 3 integration is provided via:
 
 ```scala
-libraryDependencies += "org.typelevel" %%% "munit-cats-effect-3" % "0.7.0" % "test"
+libraryDependencies += "org.typelevel" %%% "munit-cats-effect-3" % "0.10.0" % "test"
 ```
 
 Builds are available for Scala 2.12, 2.13, and 3 for both the JVM and Scala.js.
