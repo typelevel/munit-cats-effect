@@ -41,6 +41,8 @@ ThisBuild / versionIntroduced := Map(
   "3.0.0-M2" -> "1.0.0"
 )
 
+ThisBuild / fatalWarningsInCI := false
+
 lazy val root = project
   .in(file("."))
   .aggregate(ce3.jvm, ce3.js, ce2.jvm, ce2.js)
