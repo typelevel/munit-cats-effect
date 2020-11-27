@@ -9,32 +9,17 @@ ThisBuild / organizationName := "Typelevel"
 ThisBuild / publishGithubUser := "milanvdm"
 ThisBuild / publishFullName := "Milan van der Meer"
 
-ThisBuild / crossScalaVersions := List("3.0.0-M1", "0.27.0-RC1", "2.12.11", "2.13.3")
+ThisBuild / crossScalaVersions := List("3.0.0-M1", "3.0.0-M2", "2.12.11", "2.13.4")
 
-ThisBuild / githubWorkflowPublishTargetBranches := Seq(
-  RefPredicate.Equals(Ref.Branch("main")),
-  RefPredicate.StartsWith(Ref.Tag("v"))
-)
-ThisBuild / githubWorkflowEnv ++= Map(
-  "SONATYPE_USERNAME" -> s"$${{ secrets.SONATYPE_USERNAME }}",
-  "SONATYPE_PASSWORD" -> s"$${{ secrets.SONATYPE_PASSWORD }}",
-  "PGP_SECRET" -> s"$${{ secrets.PGP_SECRET }}"
-)
-ThisBuild / githubWorkflowTargetTags += "v*"
+ThisBuild / spiewakCiReleaseSnapshots := true
+
+ThisBuild / spiewakMainBranches := List("main")
 
 ThisBuild / githubWorkflowBuildPreamble ++=
   Seq(
     WorkflowStep.Sbt(List("scalafmtCheckAll")),
     WorkflowStep.Sbt(List("scalafmtSbtCheck"))
   )
-
-ThisBuild / githubWorkflowPublishPreamble +=
-  WorkflowStep.Run(
-    List("echo $PGP_SECRET | base64 -d | gpg --import"),
-    name = Some("Import signing key")
-  )
-
-ThisBuild / githubWorkflowPublish := Seq(WorkflowStep.Sbt(List("release")))
 
 ThisBuild / homepage := Some(url("https://github.com/typelevel/munit-cats-effect"))
 
@@ -52,13 +37,14 @@ ThisBuild / scalafmtOnCompile := true
 ThisBuild / testFrameworks += new TestFramework("munit.Framework")
 
 ThisBuild / versionIntroduced := Map(
-  "0.27.0-RC1" -> "1.0.0"
+  "3.0.0-M1" -> "1.0.0",
+  "3.0.0-M2" -> "1.0.0"
 )
 
 lazy val root = project
   .in(file("."))
   .aggregate(ce3.jvm, ce3.js, ce2.jvm, ce2.js)
-  .settings(noPublishSettings)
+  .enablePlugins(NoPublishPlugin, SonatypeCiRelease)
 
 lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
@@ -72,7 +58,7 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
   .settings(
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.19",
-      "org.typelevel" %%% "cats-effect" % "3.0.0-M3"
+      "org.typelevel" %%% "cats-effect" % "3.0.0-M4"
     ),
     mimaPreviousArtifacts := Set.empty
   )
@@ -91,7 +77,7 @@ lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
   .settings(
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.19",
-      "org.typelevel" %%% "cats-effect" % "2.3.0-M1"
+      "org.typelevel" %%% "cats-effect" % "2.3.0"
     ),
     mimaPreviousArtifacts := Set.empty
   )
