@@ -40,6 +40,10 @@ class ExampleSuite extends CatsEffectSuite {
     IO(42).assertEquals(42)
   }
 
+  test("or via plain assert syntax on IO[Boolean]") {
+    IO(true).assert
+  }
+
   test("SyncIO works too") {
     SyncIO(42).assertEquals(42)
   }
