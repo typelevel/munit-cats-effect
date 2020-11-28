@@ -48,6 +48,25 @@ trait CatsEffectAssertions { self: Assertions =>
   )(implicit loc: Location, ev: B <:< A): IO[Unit] =
     obtained.flatMap(a => IO(assertEquals(a, returns, clue)))
 
+  /** Asserts that an `IO[Boolean]` returns true.
+    *
+    * For example:
+    * {{{
+    *   assertIOBoolean(IO(true))
+    * }}}
+    *
+    * The "clue" value can be used to give extra information about the failure in case the
+    * assertion fails.
+    *
+    * @param obtained the IO[Boolean] under testing
+    * @param clue a value that will be printed in case the assertions fails
+    */
+  protected def assertIOBoolean(
+      obtained: IO[Boolean],
+      clue: => Any = "values are not the same"
+  )(implicit loc: Location): IO[Unit] =
+    assertIO(obtained, true, clue)
+
   /** Intercepts a `Throwable` being thrown inside the provided `IO`.
     *
     * @example
@@ -249,6 +268,19 @@ trait CatsEffectAssertions { self: Assertions =>
     )(implicit T: ClassTag[T], loc: Location): IO[T] =
       interceptMessageIO[T](expectedExceptionMessage)(io)
 
+  }
+
+  implicit class MUnitCatsAssertionsForIOBooleanOps(io: IO[Boolean]) {
+
+    /** Asserts that this effect returns an expected value.
+      *
+      * For example:
+      * {{{
+      *   IO(true).assert // OK
+      * }}}
+      */
+    def assert(implicit loc: Location): IO[Unit] =
+      assertIOBoolean(io, "value is not true")
   }
 
   implicit class MUnitCatsAssertionsForSyncIOOps[A](io: SyncIO[A]) {
