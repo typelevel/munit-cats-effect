@@ -34,6 +34,17 @@ class CatsEffectAssertionsSyntaxSpec extends CatsEffectSuite {
     io assertEquals 3
   }
 
+  test("assert (for IO) works (successful assertion)") {
+    val io = IO.sleep(2.millis) *> IO(true)
+
+    io.assert
+  }
+  test("assert (for IO) works (failed assertion)".fail) {
+    val io = IO.sleep(2.millis) *> IO(false)
+
+    io.assert
+  }
+
   test("intercept (for IO) works (successful assertion)") {
     val io = (new IllegalArgumentException("BOOM!")).raiseError[IO, Unit]
 
