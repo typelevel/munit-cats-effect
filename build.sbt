@@ -65,7 +65,6 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
     mimaPreviousArtifacts := Set.empty
   )
   .jsSettings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
-  .jsSettings(crossScalaVersions := crossScalaVersions.value.filter(_.startsWith("2.")))
 
 lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
@@ -84,7 +83,6 @@ lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
     mimaPreviousArtifacts := Set.empty
   )
   .jsSettings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
-  .jsSettings(crossScalaVersions := crossScalaVersions.value.filter(_.startsWith("2.")))
 
 addCommandAlias("fmt", """scalafmtSbt;scalafmtAll""")
 addCommandAlias("fmtCheck", """scalafmtSbtCheck;scalafmtCheckAll""")
