@@ -46,7 +46,7 @@ ThisBuild / fatalWarningsInCI := false
 lazy val root = project
   .in(file("."))
   .aggregate(ce3.jvm, ce3.js, ce2.jvm, ce2.js)
-  .enablePlugins(NoPublishPlugin, SonatypeCiRelease)
+  .enablePlugins(NoPublishPlugin, SonatypeCiReleasePlugin)
 
 lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
