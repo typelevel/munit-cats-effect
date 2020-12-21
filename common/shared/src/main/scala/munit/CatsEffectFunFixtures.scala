@@ -43,7 +43,7 @@ trait CatsEffectFunFixtures extends FunFixtures { self: CatsEffectSuite =>
 
       FunFixture.async(
         setup = { testOptions =>
-          val resourceEffect = resource.allocated[IO, T]
+          val resourceEffect = resource.allocated
           val setupEffect =
             resourceEffect
               .map { case (t, release) =>
