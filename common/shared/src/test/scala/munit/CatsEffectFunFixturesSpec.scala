@@ -16,7 +16,7 @@
 
 package munit
 
-import cats.effect.{IO, Resource}
+import cats.effect.{IO, SyncIO, Resource}
 import cats.syntax.flatMap._
 
 import scala.concurrent.Promise
@@ -30,7 +30,7 @@ class CatsEffectFunFixturesSpec extends CatsEffectSuite with CatsEffectFunFixtur
   var completedFromResourceAcquire: Option[Boolean] = None
   var completedFromResourceRelease: Option[Boolean] = None
 
-  val latchOnTeardown: FunFixture[String] =
+  val latchOnTeardown: SyncIO[FunFixture[String]] =
     ResourceFixture[String](
       resource = Resource.make[IO, String](
         IO {

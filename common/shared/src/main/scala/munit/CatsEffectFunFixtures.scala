@@ -16,7 +16,7 @@
 
 package munit
 
-import cats.effect.{IO, Resource}
+import cats.effect.{IO, SyncIO, Resource}
 import cats.syntax.flatMap._
 
 import scala.concurrent.Promise
@@ -27,7 +27,7 @@ trait CatsEffectFunFixtures extends FunFixtures { self: CatsEffectSuite =>
 
     def apply[T](
         resource: Resource[IO, T]
-    ): FunFixture[T] =
+    ): SyncIO[FunFixture[T]] =
       apply(
         resource,
         (_, _) => IO.unit,
@@ -38,7 +38,7 @@ trait CatsEffectFunFixtures extends FunFixtures { self: CatsEffectSuite =>
         resource: Resource[IO, T],
         setup: (TestOptions, T) => IO[Unit],
         teardown: T => IO[Unit]
-    ): FunFixture[T] = {
+    ): SyncIO[FunFixture[T]] = SyncIO {
       val promise = Promise[IO[Unit]]()
 
       FunFixture.async(
@@ -62,6 +62,20 @@ trait CatsEffectFunFixtures extends FunFixtures { self: CatsEffectSuite =>
       )
     }
 
+  }
+
+  implicit class SyncIOFunFixtureOps[T](private val fixture: SyncIO[FunFixture[T]]) {
+    def test(name: String)(
+        body: T => Any
+    )(implicit loc: Location): Unit = {
+      fixture.unsafeRunSync().test(TestOptions(name))(body)
+    }
+
+    def test(options: TestOptions)(
+        body: T => Any
+    )(implicit loc: Location): Unit = {
+      fixture.unsafeRunSync().test(options)(body)
+    }
   }
 
 }
