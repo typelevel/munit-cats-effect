@@ -46,4 +46,8 @@ class ExampleSuite extends CatsEffectSuite {
   dispatcher.test("resources can be lifted to munit fixtures") { dsp =>
     dsp.unsafeRunAndForget(IO(42))
   }
+
+  dispatcher.test("resources can be lifted to munit fixtures again") { dsp =>
+    dsp.unsafeRunAndForget(IO(42))
+  }
 }
