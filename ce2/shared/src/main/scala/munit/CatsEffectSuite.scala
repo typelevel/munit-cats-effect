@@ -18,7 +18,7 @@ package munit
 
 import cats.effect.{ContextShift, IO, SyncIO, Timer}
 
-import scala.concurrent.Future
+import scala.concurrent.{Future, ExecutionContext}
 
 abstract class CatsEffectSuite
     extends FunSuite
@@ -26,10 +26,10 @@ abstract class CatsEffectSuite
     with CatsEffectFunFixtures {
 
   implicit def munitContextShift: ContextShift[IO] =
-    IO.contextShift(munitExecutionContext)
+    IO.contextShift(ExecutionContext.global)
 
   implicit def munitTimer: Timer[IO] =
-    IO.timer(munitExecutionContext)
+    IO.timer(ExecutionContext.global)
 
   override def munitValueTransforms: List[ValueTransform] =
     super.munitValueTransforms ++ List(munitIOTransform, munitSyncIOTransform)
