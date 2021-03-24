@@ -1,0 +1,61 @@
+/*
+ * Copyright 2021 Typelevel
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package munit
+
+import cats.effect.{IO, Resource}
+
+class CatsEffectFixturesSpec extends CatsEffectSuite {
+
+  var acquired: Int = 0
+  var released: Int = 0
+
+  val fixture = ResourceSuiteLocalFixture(
+    "fixture",
+    Resource.make(
+      IO {
+        acquired += 1
+        ()
+      }
+    )(_ =>
+      IO {
+        released += 1
+        ()
+      }
+    )
+  )
+
+  override def munitFixtures = List(fixture)
+
+  override def beforeAll(): Unit = {
+    assertEquals(acquired, 0)
+    assertEquals(released, 0)
+  }
+
+  override def afterAll(): Unit = {
+    assertEquals(acquired, 1)
+    assertEquals(released, 1)
+  }
+
+  test("first test") {
+    IO(fixture()).assertEquals(())
+  }
+
+  test("second test") {
+    IO(fixture()).assertEquals(())
+  }
+
+}

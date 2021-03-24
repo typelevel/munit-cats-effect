@@ -64,7 +64,15 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
     ),
     mimaPreviousArtifacts := Set.empty
   )
-  .jsSettings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
+  .jvmSettings(
+    Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/jvm/src/main/scala",
+    Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/jvm/src/test/scala"
+  )
+  .jsSettings(
+    Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/js/src/main/scala",
+    Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/js/src/test/scala",
+    scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
+  )
 
 lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
@@ -82,7 +90,15 @@ lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
     ),
     mimaPreviousArtifacts := Set.empty
   )
-  .jsSettings(scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)))
+  .jvmSettings(
+    Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/jvm/src/main/scala",
+    Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/jvm/src/test/scala"
+  )
+  .jsSettings(
+    Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/js/src/main/scala",
+    Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/js/src/test/scala",
+    scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
+  )
 
 addCommandAlias("fmt", """scalafmtSbt;scalafmtAll""")
 addCommandAlias("fmtCheck", """scalafmtSbtCheck;scalafmtCheckAll""")
