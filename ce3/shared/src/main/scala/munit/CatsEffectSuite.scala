@@ -24,6 +24,7 @@ import scala.concurrent.Future
 abstract class CatsEffectSuite
     extends FunSuite
     with CatsEffectAssertions
+    with CatsEffectFixtures
     with CatsEffectFunFixtures {
 
   implicit val ioRuntime: IORuntime = IORuntime.global

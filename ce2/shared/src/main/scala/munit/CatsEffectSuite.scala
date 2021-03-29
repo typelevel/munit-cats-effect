@@ -23,6 +23,7 @@ import scala.concurrent.{Future, ExecutionContext}
 abstract class CatsEffectSuite
     extends FunSuite
     with CatsEffectAssertions
+    with CatsEffectFixtures
     with CatsEffectFunFixtures {
 
   implicit def munitContextShift: ContextShift[IO] =
