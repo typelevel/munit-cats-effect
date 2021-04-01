@@ -18,7 +18,7 @@ package munit
 
 import cats.effect.{IO, Resource}
 
-class CatsEffectFixturesSpec extends CatsEffectSuite {
+class CatsEffectFixturesSpec extends CatsEffectSuite with CatsEffectAssertions {
 
   var acquired: Int = 0
   var released: Int = 0
@@ -36,6 +36,11 @@ class CatsEffectFixturesSpec extends CatsEffectSuite {
         ()
       }
     )
+  )
+
+  val uninitializedFixture = ResourceSuiteLocalFixture(
+    "uninitialized-fixture",
+    Resource.make(IO.unit)(_ => IO.unit)
   )
 
   override def munitFixtures = List(fixture)
@@ -56,6 +61,13 @@ class CatsEffectFixturesSpec extends CatsEffectSuite {
 
   test("second test") {
     IO(fixture()).assertEquals(())
+  }
+
+  test("throws exception") {
+    IO(uninitializedFixture())
+      .interceptMessage[ResourceSuiteLocalFixture.FixtureNotInstantiatedException](
+        "The fixture `uninitialized-fixture` was not instantiated. Override `munitFixtures` and include a reference to this fixture."
+      )
   }
 
 }

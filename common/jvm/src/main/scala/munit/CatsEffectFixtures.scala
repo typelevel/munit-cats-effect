@@ -21,11 +21,20 @@ import cats.effect.{IO, Resource}
 trait CatsEffectFixtures { self: CatsEffectSuite =>
 
   object ResourceSuiteLocalFixture {
+
+    final class FixtureNotInstantiatedException(name: String)
+        extends Exception(
+          s"The fixture `$name` was not instantiated. Override `munitFixtures` and include a reference to this fixture."
+        )
+
     def apply[T](name: String, resource: Resource[IO, T]): Fixture[T] =
       new Fixture[T](name) {
         var value: Option[(T, IO[Unit])] = None
 
-        def apply(): T = value.get._1
+        def apply(): T = value match {
+          case Some(v) => v._1
+          case None    => throw new FixtureNotInstantiatedException(name)
+        }
 
         override def beforeAll(): Unit = {
           val resourceEffect = resource.allocated

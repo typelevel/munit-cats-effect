@@ -60,3 +60,31 @@ class ExampleSuite extends CatsEffectSuite {
 
 There are more assertion functions like `interceptIO` and `interceptMessageIO` as well as syntax versions `intercept` and `interceptMessage`. See the `CatsEffectAssertions` trait for full details.
 
+## Suite-local fixtures
+
+MUnit supports reusable suite-local fixtures that are instantiated only once for the entire test suite. This is useful when an expensive resource (like an HTTP client) is needed for each test case but it is undesirable to allocate a new one each time.
+
+```scala
+import cats.effect.{IO, Resource}
+
+class SuiteLocalExampleSuite extends CatsEffectSuite {
+
+  val myFixture = ResourceSuiteLocalFixture(
+    "my-fixture",
+    Resource.make(IO.unit)(_ => IO.unit)
+  )
+
+  override def munitFixtures = List(myFixture)
+
+  test("first test") {
+    IO(myFixture()).assertEquals(())
+  }
+
+  test("second test") {
+    IO(myFixture()).assertEquals(())
+  }
+
+}
+```
+
+Notice that this integration is not pure; `myFixture` is mutated internally when the framework initializes the fixture, so the same reference that is used from test cases must be specified in `munitFixtures`. Otherwise an exception `FixtureNotInstantiatedException` will be thrown.
