@@ -1,6 +1,3 @@
-import sbtcrossproject.CrossPlugin.autoImport.crossProject
-import sbtcrossproject.CrossPlugin.autoImport.CrossType
-
 ThisBuild / baseVersion := "0.4"
 
 ThisBuild / organization := "org.typelevel"
@@ -50,8 +47,6 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
     Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/main/scala",
     Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/test/scala"
   )
-  .settings(dottyLibrarySettings)
-  .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.26",
@@ -76,8 +71,6 @@ lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
     Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/main/scala",
     Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/test/scala"
   )
-  .settings(dottyLibrarySettings)
-  .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.26",
