@@ -1,6 +1,3 @@
-import sbtcrossproject.CrossPlugin.autoImport.crossProject
-import sbtcrossproject.CrossPlugin.autoImport.CrossType
-
 ThisBuild / baseVersion := "0.4"
 
 ThisBuild / organization := "org.typelevel"
@@ -9,7 +6,7 @@ ThisBuild / organizationName := "Typelevel"
 ThisBuild / publishGithubUser := "milanvdm"
 ThisBuild / publishFullName := "Milan van der Meer"
 
-ThisBuild / crossScalaVersions := List("3.0.0", "2.12.13", "2.13.6")
+ThisBuild / crossScalaVersions := List("3.0.0", "2.12.14", "2.13.5")
 
 ThisBuild / spiewakCiReleaseSnapshots := true
 
@@ -50,8 +47,6 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
     Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/main/scala",
     Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/test/scala"
   )
-  .settings(dottyLibrarySettings)
-  .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.26",
@@ -76,8 +71,6 @@ lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
     Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/main/scala",
     Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/test/scala"
   )
-  .settings(dottyLibrarySettings)
-  .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.26",
