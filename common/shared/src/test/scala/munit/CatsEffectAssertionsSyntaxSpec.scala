@@ -23,30 +23,46 @@ import cats.effect.SyncIO
 
 class CatsEffectAssertionsSyntaxSpec extends CatsEffectSuite {
 
+  private val exception = new IllegalArgumentException("BOOM!")
+
   test("assertEquals (for IO) works (successful assertion)") {
     val io = IO.sleep(2.millis) *> IO(2)
 
     io assertEquals 2
   }
+
   test("assertEquals (for IO) works (failed assertion)".fail) {
     val io = IO.sleep(2.millis) *> IO(2)
 
     io assertEquals 3
   }
 
-  test("assert (for IO) works (successful assertion)") {
+  test("assert (for IO[Boolean]) works (successful assertion)") {
     val io = IO.sleep(2.millis) *> IO(true)
 
     io.assert
   }
-  test("assert (for IO) works (failed assertion)".fail) {
+
+  test("assert (for IO[Boolean]) works (failed assertion)".fail) {
     val io = IO.sleep(2.millis) *> IO(false)
 
     io.assert
   }
 
+  test("assert (for IO[Unit]) works (successful assertion)") {
+    val io = IO.sleep(2.millis) *> IO.unit
+
+    io.assert
+  }
+
+  test("assert (for IO[Unit]) works (failed assertion)".fail) {
+    val io = IO.sleep(2.millis) *> IO.raiseError[Unit](exception)
+
+    io.assert
+  }
+
   test("intercept (for IO) works (successful assertion)") {
-    val io = (new IllegalArgumentException("BOOM!")).raiseError[IO, Unit]
+    val io = exception.raiseError[IO, Unit]
 
     io.intercept[IllegalArgumentException]
   }
@@ -70,7 +86,7 @@ class CatsEffectAssertionsSyntaxSpec extends CatsEffectSuite {
   }
 
   test("interceptMessage (for IO) works (successful assertion)") {
-    val io = (new IllegalArgumentException("BOOM!")).raiseError[IO, Unit]
+    val io = exception.raiseError[IO, Unit]
 
     io.interceptMessage[IllegalArgumentException]("BOOM!")
   }
@@ -98,14 +114,27 @@ class CatsEffectAssertionsSyntaxSpec extends CatsEffectSuite {
 
     io assertEquals 2
   }
+
   test("assertEquals (for SyncIO) works (failed assertion)".fail) {
     val io = SyncIO(2)
 
     io assertEquals 3
   }
 
+  test("assert (for SyncIO[Unit]) works (successful assertion)") {
+    val io = SyncIO.unit
+
+    io.assert
+  }
+
+  test("assert (for SyncIO[Unit]) works (failed assertion)".fail) {
+    val io = SyncIO.raiseError[Unit](exception)
+
+    io.assert
+  }
+
   test("intercept (for SyncIO) works (successful assertion)") {
-    val io = (new IllegalArgumentException("BOOM!")).raiseError[SyncIO, Unit]
+    val io = exception.raiseError[SyncIO, Unit]
 
     io.intercept[IllegalArgumentException]
   }
@@ -129,7 +158,7 @@ class CatsEffectAssertionsSyntaxSpec extends CatsEffectSuite {
   }
 
   test("interceptMessage (for SyncIO) works (successful assertion)") {
-    val io = (new IllegalArgumentException("BOOM!")).raiseError[SyncIO, Unit]
+    val io = exception.raiseError[SyncIO, Unit]
 
     io.interceptMessage[IllegalArgumentException]("BOOM!")
   }

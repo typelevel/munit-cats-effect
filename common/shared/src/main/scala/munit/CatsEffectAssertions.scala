@@ -48,6 +48,25 @@ trait CatsEffectAssertions { self: Assertions =>
   )(implicit loc: Location, ev: B <:< A): IO[Unit] =
     obtained.flatMap(a => IO(assertEquals(a, returns, clue)))
 
+  /** Asserts that an `IO[Unit]` returns the Unit value.
+    *
+    * For example:
+    * {{{
+    *   assertIO_(IO.unit)
+    * }}}
+    *
+    * The "clue" value can be used to give extra information about the failure in case the
+    * assertion fails.
+    *
+    * @param obtained the IO under testing
+    * @param clue a value that will be printed in case the assertions fails
+    */
+  protected def assertIO_(
+      obtained: IO[Unit],
+      clue: => Any = "value is not ()"
+  )(implicit loc: Location): IO[Unit] =
+    obtained.flatMap(a => IO(assertEquals(a, (), clue)))
+
   /** Asserts that an `IO[Boolean]` returns true.
     *
     * For example:
@@ -131,6 +150,25 @@ trait CatsEffectAssertions { self: Assertions =>
       clue: => Any = "values are not the same"
   )(implicit loc: Location, ev: B <:< A): SyncIO[Unit] =
     obtained.flatMap(a => SyncIO(assertEquals(a, returns, clue)))
+
+  /** Asserts that a `SyncIO[Unit]` returns the Unit value.
+    *
+    * For example:
+    * {{{
+    *   assertSyncIO_(SyncIO.unit) // OK
+    * }}}
+    *
+    * The "clue" value can be used to give extra information about the failure in case the
+    * assertion fails.
+    *
+    * @param obtained the SyncIO under testing
+    * @param clue a value that will be printed in case the assertions fails
+    */
+  protected def assertSyncIO_(
+      obtained: SyncIO[Unit],
+      clue: => Any = "value is not ()"
+  )(implicit loc: Location): SyncIO[Unit] =
+    obtained.flatMap(a => SyncIO(assertEquals(a, (), clue)))
 
   /** Intercepts a `Throwable` being thrown inside the provided `SyncIO`.
     *
@@ -270,6 +308,19 @@ trait CatsEffectAssertions { self: Assertions =>
 
   }
 
+  implicit class MUnitCatsAssertionsForIOUnitOps(io: IO[Unit]) {
+
+    /** Asserts that this effect returns the Unit value.
+      *
+      * For example:
+      * {{{
+      *   IO.unit.assert // OK
+      * }}}
+      */
+    def assert(implicit loc: Location): IO[Unit] =
+      assertIO_(io)
+  }
+
   implicit class MUnitCatsAssertionsForIOBooleanOps(io: IO[Boolean]) {
 
     /** Asserts that this effect returns an expected value.
@@ -334,6 +385,18 @@ trait CatsEffectAssertions { self: Assertions =>
 
   }
 
+  implicit class MUnitCatsAssertionsForSyncIOUnitOps(io: SyncIO[Unit]) {
+
+    /** Asserts that this effect returns the Unit value.
+      *
+      * For example:
+      * {{{
+      *   SyncIO.unit.assert // OK
+      * }}}
+      */
+    def assert(implicit loc: Location): SyncIO[Unit] =
+      assertSyncIO_(io)
+  }
 }
 
 object CatsEffectAssertions extends Assertions with CatsEffectAssertions
