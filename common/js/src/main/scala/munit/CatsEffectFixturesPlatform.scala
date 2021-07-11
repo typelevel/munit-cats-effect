@@ -16,4 +16,4 @@
 
 package munit
 
-trait CatsEffectFixtures { self: CatsEffectSuite => }
+trait CatsEffectFixturesPlatform { self: CatsEffectSuite => }
