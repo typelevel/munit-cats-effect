@@ -47,4 +47,11 @@ abstract class CatsEffectSuite
       { case e: SyncIO[_] => Future(e.unsafeRunSync())(munitExecutionContext) }
     )
 
+  private[munit] def unsafeRunAndForget[A](ioa: IO[A]): Unit = ioa.unsafeRunAsyncAndForget()
+
+}
+
+object CatsEffectSuite {
+  type Deferred[F[_], A] = cats.effect.concurrent.Deferred[F, A]
+  val Deferred = cats.effect.concurrent.Deferred
 }

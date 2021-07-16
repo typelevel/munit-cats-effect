@@ -18,7 +18,7 @@ package munit
 
 import cats.effect.{IO, Resource}
 
-trait CatsEffectFixtures { self: CatsEffectSuite =>
+trait CatsEffectFixturesPlatform { self: CatsEffectSuite =>
 
   object ResourceSuiteLocalFixture {
 
