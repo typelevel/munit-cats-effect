@@ -27,19 +27,22 @@ trait CatsEffectAssertions { self: Assertions =>
 
   /** Asserts that an `IO` returns an expected value.
     *
-    * The "returns" value (second argument) must have the same type or be a
-    * subtype of the one "contained" inside the `IO` (first argument). For example:
+    * The "returns" value (second argument) must have the same type or be a subtype of the one
+    * "contained" inside the `IO` (first argument). For example:
     * {{{
     *   assertIO(IO(Option(1)), returns = Some(1)) // OK
     *   assertIO(IO(Some(1)), returns = Option(1)) // Error: Option[Int] is not a subtype of Some[Int]
     * }}}
     *
-    * The "clue" value can be used to give extra information about the failure in case the
-    * assertion fails.
+    * The "clue" value can be used to give extra information about the failure in case the assertion
+    * fails.
     *
-    * @param obtained the IO under testing
-    * @param returns the expected value
-    * @param clue a value that will be printed in case the assertions fails
+    * @param obtained
+    *   the IO under testing
+    * @param returns
+    *   the expected value
+    * @param clue
+    *   a value that will be printed in case the assertions fails
     */
   def assertIO[A, B](
       obtained: IO[A],
@@ -55,11 +58,13 @@ trait CatsEffectAssertions { self: Assertions =>
     *   assertIO_(IO.unit)
     * }}}
     *
-    * The "clue" value can be used to give extra information about the failure in case the
-    * assertion fails.
+    * The "clue" value can be used to give extra information about the failure in case the assertion
+    * fails.
     *
-    * @param obtained the IO under testing
-    * @param clue a value that will be printed in case the assertions fails
+    * @param obtained
+    *   the IO under testing
+    * @param clue
+    *   a value that will be printed in case the assertions fails
     */
   protected def assertIO_(
       obtained: IO[Unit],
@@ -74,11 +79,13 @@ trait CatsEffectAssertions { self: Assertions =>
     *   assertIOBoolean(IO(true))
     * }}}
     *
-    * The "clue" value can be used to give extra information about the failure in case the
-    * assertion fails.
+    * The "clue" value can be used to give extra information about the failure in case the assertion
+    * fails.
     *
-    * @param obtained the IO[Boolean] under testing
-    * @param clue a value that will be printed in case the assertions fails
+    * @param obtained
+    *   the IO[Boolean] under testing
+    * @param clue
+    *   a value that will be printed in case the assertions fails
     */
   protected def assertIOBoolean(
       obtained: IO[Boolean],
@@ -130,19 +137,22 @@ trait CatsEffectAssertions { self: Assertions =>
 
   /** Asserts that a `SyncIO` returns an expected value.
     *
-    * The "returns" value (second argument) must have the same type or be a
-    * subtype of the one "contained" inside the `SyncIO` (first argument). For example:
+    * The "returns" value (second argument) must have the same type or be a subtype of the one
+    * "contained" inside the `SyncIO` (first argument). For example:
     * {{{
     *   assertSyncIO(SyncIO(Option(1)), returns = Some(1)) // OK
     *   assertSyncIO(SyncIO(Some(1)), returns = Option(1)) // Error: Option[Int] is not a subtype of Some[Int]
     * }}}
     *
-    * The "clue" value can be used to give extra information about the failure in case the
-    * assertion fails.
+    * The "clue" value can be used to give extra information about the failure in case the assertion
+    * fails.
     *
-    * @param obtained the SyncIO under testing
-    * @param returns the expected value
-    * @param clue a value that will be printed in case the assertions fails
+    * @param obtained
+    *   the SyncIO under testing
+    * @param returns
+    *   the expected value
+    * @param clue
+    *   a value that will be printed in case the assertions fails
     */
   def assertSyncIO[A, B](
       obtained: SyncIO[A],
@@ -158,11 +168,13 @@ trait CatsEffectAssertions { self: Assertions =>
     *   assertSyncIO_(SyncIO.unit) // OK
     * }}}
     *
-    * The "clue" value can be used to give extra information about the failure in case the
-    * assertion fails.
+    * The "clue" value can be used to give extra information about the failure in case the assertion
+    * fails.
     *
-    * @param obtained the SyncIO under testing
-    * @param clue a value that will be printed in case the assertions fails
+    * @param obtained
+    *   the SyncIO under testing
+    * @param clue
+    *   a value that will be printed in case the assertions fails
     */
   protected def assertSyncIO_(
       obtained: SyncIO[Unit],
@@ -261,8 +273,8 @@ trait CatsEffectAssertions { self: Assertions =>
 
     /** Asserts that this effect returns an expected value.
       *
-      * The "expected" value (second argument) must have the same type or be a
-      * subtype of the one "contained" inside the effect. For example:
+      * The "expected" value (second argument) must have the same type or be a subtype of the one
+      * "contained" inside the effect. For example:
       * {{{
       *   IO(Option(1)).assertEquals(Some(1)) // OK
       *   IO(Some(1)).assertEquals(Option(1)) // Error: Option[Int] is not a subtype of Some[Int]
@@ -271,8 +283,10 @@ trait CatsEffectAssertions { self: Assertions =>
       * The "clue" value can be used to give extra information about the failure in case the
       * assertion fails.
       *
-      * @param expected the expected value
-      * @param clue a value that will be printed in case the assertions fails
+      * @param expected
+      *   the expected value
+      * @param clue
+      *   a value that will be printed in case the assertions fails
       */
     def assertEquals[B](
         expected: B,
@@ -338,8 +352,8 @@ trait CatsEffectAssertions { self: Assertions =>
 
     /** Asserts that this effect returns an expected value.
       *
-      * The "expected" value (second argument) must have the same type or be a
-      * subtype of the one "contained" inside the effect. For example:
+      * The "expected" value (second argument) must have the same type or be a subtype of the one
+      * "contained" inside the effect. For example:
       * {{{
       *   SyncIO(Option(1)).assertEquals(Some(1)) // OK
       *   SyncIO(Some(1)).assertEquals(Option(1)) // Error: Option[Int] is not a subtype of Some[Int]
@@ -348,8 +362,10 @@ trait CatsEffectAssertions { self: Assertions =>
       * The "clue" value can be used to give extra information about the failure in case the
       * assertion fails.
       *
-      * @param expected the expected value
-      * @param clue a value that will be printed in case the assertions fails
+      * @param expected
+      *   the expected value
+      * @param clue
+      *   a value that will be printed in case the assertions fails
       */
     def assertEquals[B](
         expected: B,
