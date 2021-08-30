@@ -27,9 +27,11 @@ abstract class CatsEffectSuite
     with CatsEffectFixtures
     with CatsEffectFunFixtures {
 
-  implicit val ioRuntime: IORuntime = IORuntime.global
+  def ioRuntime: IORuntime = IORuntime.global
 
-  override val munitExecutionContext: ExecutionContext = IORuntime.global.compute
+  implicit val ir: IORuntime = ioRuntime
+
+  override val munitExecutionContext: ExecutionContext = ioRuntime.compute
 
   override def munitValueTransforms: List[ValueTransform] =
     super.munitValueTransforms ++ List(munitIOTransform, munitSyncIOTransform)
