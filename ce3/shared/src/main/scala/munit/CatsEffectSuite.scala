@@ -16,8 +16,8 @@
 
 package munit
 
-import cats.effect.{IO, SyncIO}
 import cats.effect.unsafe.IORuntime
+import cats.effect.{IO, SyncIO}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -27,9 +27,7 @@ abstract class CatsEffectSuite
     with CatsEffectFixtures
     with CatsEffectFunFixtures {
 
-  def ioRuntime: IORuntime = IORuntime.global
-
-  implicit val ir: IORuntime = ioRuntime
+  implicit def munitIoRuntime: IORuntime = IORuntime.global
 
   override val munitExecutionContext: ExecutionContext = ioRuntime.compute
 

@@ -19,33 +19,7 @@ import munit.CatsEffectSuite
 
 class ExampleSuite extends CatsEffectSuite {
 
-//  override lazy val ioRuntime: IORuntime = {
-//    println(s"NUMBER OF PROCESSORS: ${Runtime.getRuntime().availableProcessors()}")
-//
-//    val (compute, compDown) =
-//      IORuntime.createDefaultComputeThreadPool(ioRuntime, threads = 2)
-//
-//    val (blocking, blockDown) =
-//      IORuntime.createDefaultBlockingExecutionContext()
-//
-//    val (scheduler, schedDown) =
-//      IORuntime.createDefaultScheduler()
-//
-//    IORuntime(
-//      compute,
-//      blocking,
-//      scheduler,
-//      { () =>
-//        compDown()
-//        blockDown()
-//        schedDown()
-//      },
-//      unsafe.IORuntimeConfig()
-//    )
-//  }
-
   test("tests can return IO[Unit] with assertions expressed via a map") {
-    println(s"NUMBER OF PROCESSORS: ${Runtime.getRuntime().availableProcessors()}")
     IO(42).map(it => assertEquals(it, 42))
   }
 
