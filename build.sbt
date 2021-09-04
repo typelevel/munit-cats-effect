@@ -50,7 +50,7 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
   .settings(
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.29",
-      "org.typelevel" %%% "cats-effect" % "3.2.5"
+      "org.typelevel" %%% "cats-effect" % "3.2.6"
     ),
     mimaPreviousArtifacts := Set.empty
   )
