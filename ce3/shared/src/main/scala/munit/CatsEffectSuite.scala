@@ -29,7 +29,7 @@ abstract class CatsEffectSuite
 
   implicit def munitIoRuntime: IORuntime = IORuntime.global
 
-  override val munitExecutionContext: ExecutionContext = munitIoRuntime.compute
+  override implicit val munitExecutionContext: ExecutionContext = munitIoRuntime.compute
 
   override def munitValueTransforms: List[ValueTransform] =
     super.munitValueTransforms ++ List(munitIOTransform, munitSyncIOTransform)
