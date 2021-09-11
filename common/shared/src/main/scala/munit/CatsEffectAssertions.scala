@@ -234,18 +234,17 @@ trait CatsEffectAssertions { self: Assertions =>
     case Right(value) =>
       Sync[F].delay {
         fail(
-          s"expected exception of type '${T.runtimeClass.getName()}' but body evaluated successfully",
+          s"expected exception of type '${T.runtimeClass.getName}' but body evaluated successfully",
           clues(value)
         )
       }
-    case Left(e: FailException) if !T.runtimeClass.isAssignableFrom(e.getClass()) =>
+    case Left(e: FailException) if !T.runtimeClass.isAssignableFrom(e.getClass) =>
       Sync[F].raiseError[T](e)
-    case Left(NonFatal(e: T))
-        if expectedExceptionMessage.map(_ === e.getMessage()).getOrElse(true) =>
+    case Left(NonFatal(e: T)) if expectedExceptionMessage.forall(_ === e.getMessage) =>
       Sync[F].pure(e)
     case Left(NonFatal(e: T)) =>
       Sync[F].raiseError[T] {
-        val obtained = e.getClass().getName()
+        val obtained = e.getClass.getName
 
         new FailException(
           s"intercept failed, exception '$obtained' had message '${e.getMessage}', " +
@@ -257,8 +256,8 @@ trait CatsEffectAssertions { self: Assertions =>
       }
     case Left(NonFatal(e)) =>
       Sync[F].raiseError[T] {
-        val obtained = e.getClass().getName()
-        val expected = T.runtimeClass.getName()
+        val obtained = e.getClass.getName
+        val expected = T.runtimeClass.getName
 
         new FailException(
           s"intercept failed, exception '$obtained' is not a subtype of '$expected",
@@ -267,6 +266,8 @@ trait CatsEffectAssertions { self: Assertions =>
           location = loc
         )
       }
+    case Left(e) =>
+      Sync[F].raiseError[T](e)
   }
 
   implicit class MUnitCatsAssertionsForIOOps[A](io: IO[A]) {
