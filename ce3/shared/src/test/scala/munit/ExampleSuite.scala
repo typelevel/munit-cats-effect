@@ -23,7 +23,7 @@ class ExampleSuite extends CatsEffectSuite {
     IO(42).map(it => assertEquals(it, 42))
   }
 
-  test("alternatively, asertions can be written via assertIO") {
+  test("alternatively, assertions can be written via assertIO") {
     assertIO(IO(42), 42)
   }
 

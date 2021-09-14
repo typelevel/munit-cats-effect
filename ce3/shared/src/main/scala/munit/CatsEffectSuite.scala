@@ -16,10 +16,10 @@
 
 package munit
 
-import cats.effect.{IO, SyncIO}
 import cats.effect.unsafe.IORuntime
+import cats.effect.{IO, SyncIO}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 abstract class CatsEffectSuite
     extends FunSuite
@@ -27,7 +27,9 @@ abstract class CatsEffectSuite
     with CatsEffectFixtures
     with CatsEffectFunFixtures {
 
-  implicit val ioRuntime: IORuntime = IORuntime.global
+  implicit def munitIoRuntime: IORuntime = IORuntime.global
+
+  override implicit val munitExecutionContext: ExecutionContext = munitIoRuntime.compute
 
   override def munitValueTransforms: List[ValueTransform] =
     super.munitValueTransforms ++ List(munitIOTransform, munitSyncIOTransform)
