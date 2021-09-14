@@ -3,12 +3,9 @@ ThisBuild / baseVersion := "0.4"
 ThisBuild / organization := "org.typelevel"
 ThisBuild / organizationName := "Typelevel"
 
-ThisBuild / publishGithubUser := "milanvdm"
-ThisBuild / publishFullName := "Milan van der Meer"
-
 ThisBuild / crossScalaVersions := List("3.0.2", "2.12.14", "2.13.6")
 
-ThisBuild / spiewakCiReleaseSnapshots := true
+ThisBuild / spiewakCiReleaseSnapshots := false
 
 ThisBuild / spiewakMainBranches := List("main")
 
