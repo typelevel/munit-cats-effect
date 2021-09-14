@@ -52,6 +52,6 @@ abstract class CatsEffectSuite
 }
 
 object CatsEffectSuite {
-  type Deferred[F[_], A] = cats.effect.concurrent.Deferred[F, A]
-  val Deferred = cats.effect.concurrent.Deferred
+  private[munit] type Deferred[F[_], A] = cats.effect.concurrent.Deferred[F, A]
+  private[munit] val Deferred = cats.effect.concurrent.Deferred
 }
