@@ -23,7 +23,7 @@ class CatsEffectFixturesSpec extends CatsEffectSuite with CatsEffectAssertions {
   @volatile var acquired: Int = 0
   @volatile var released: Int = 0
 
-  val fixture = ResourceSuiteLocalDeferredFixture(
+  val fixture = UnsafeResourceSuiteLocalDeferredFixture(
     "fixture",
     Resource.make(
       IO {
@@ -47,7 +47,7 @@ class CatsEffectFixturesSpec extends CatsEffectSuite with CatsEffectAssertions {
 
   override def afterAll(): Unit = {
     assertEquals(acquired, 1)
-    // assertEquals(released, 1) // Release is async, no way to check?
+    // assertEquals(released, 1) // Release is async, no way to check
   }
 
   test("first test") {

@@ -22,6 +22,7 @@ import scala.concurrent.{Future, ExecutionContext}
 
 abstract class CatsEffectSuite
     extends FunSuite
+    with CatsEffectSuitePlatform
     with CatsEffectAssertions
     with CatsEffectFixtures
     with CatsEffectFunFixtures {
@@ -46,8 +47,6 @@ abstract class CatsEffectSuite
       "SyncIO",
       { case e: SyncIO[_] => Future(e.unsafeRunSync())(munitExecutionContext) }
     )
-
-  private[munit] def unsafeRunAndForget[A](ioa: IO[A]): Unit = ioa.unsafeRunAsyncAndForget()
 
 }
 

@@ -22,7 +22,14 @@ trait CatsEffectFixtures extends CatsEffectFixturesPlatform { self: CatsEffectSu
 
   import CatsEffectSuite.Deferred
 
-  object ResourceSuiteLocalDeferredFixture {
+  /** Similar to `ResourceSuiteLocalFixture`, but supported on both JVM and JS via several caveats.
+    * Instead of directly providing `T` provides a (memoized) `IO[T]` that is backed by a `Deferred[T]`.
+    * It is unsafe because on JS the resource is closed concurrently without backpressure,
+    * i.e. the suite will complete even while the resource has not closed yet.
+    * On JVM it is semantically equivalent to `ResourceSuiteLocalFixture`.
+    * Note also that constructing this fixture is impure because it unsafely allocates a `Deferred`.
+    */
+  object UnsafeResourceSuiteLocalDeferredFixture {
 
     def apply[T](name: String, resource: Resource[IO, T]): Fixture[IO[T]] =
       new Fixture[IO[T]](name) {
@@ -32,11 +39,11 @@ trait CatsEffectFixtures extends CatsEffectFixturesPlatform { self: CatsEffectSu
 
         override def beforeAll(): Unit = {
           val resourceEffect = resource.allocated.flatMap(value.complete)
-          unsafeRunAndForget(resourceEffect)
+          unsafeRunSyncOrForget(resourceEffect)
         }
 
         override def afterAll(): Unit = {
-          unsafeRunAndForget(value.get.flatMap(_._2))
+          unsafeRunSyncOrForget(value.get.flatMap(_._2))
         }
       }
   }
