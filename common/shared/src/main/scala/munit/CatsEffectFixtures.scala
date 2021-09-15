@@ -23,11 +23,12 @@ trait CatsEffectFixtures extends CatsEffectFixturesPlatform { self: CatsEffectSu
   import CatsEffectSuite.Deferred
 
   /** Similar to `ResourceSuiteLocalFixture`, but supported on both JVM and JS via several caveats.
-    * Instead of directly providing `T` provides a (memoized) `IO[T]` that is backed by a `Deferred[T]`.
-    * It is unsafe because on JS the resource is closed concurrently without backpressure,
-    * i.e. the suite will complete even while the resource has not closed yet.
-    * On JVM it is semantically equivalent to `ResourceSuiteLocalFixture`.
-    * Note also that constructing this fixture is impure because it unsafely allocates a `Deferred`.
+    * Instead of directly providing `T` provides a (memoized) `IO[T]` that is backed by a
+    * `Deferred[T]`. It is unsafe because on JS the resource is closed concurrently without
+    * backpressure,
+    * i.e. the suite will complete even while the resource has not closed yet. On JVM it is
+    * semantically equivalent to `ResourceSuiteLocalFixture`. Note also that constructing this
+    * fixture is impure because it unsafely allocates a `Deferred`.
     */
   object UnsafeResourceSuiteLocalDeferredFixture {
 

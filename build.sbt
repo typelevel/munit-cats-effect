@@ -6,7 +6,7 @@ ThisBuild / organizationName := "Typelevel"
 ThisBuild / publishGithubUser := "milanvdm"
 ThisBuild / publishFullName := "Milan van der Meer"
 
-ThisBuild / crossScalaVersions := List("3.0.1", "2.12.14", "2.13.6")
+ThisBuild / crossScalaVersions := List("3.0.2", "2.12.14", "2.13.6")
 
 ThisBuild / spiewakCiReleaseSnapshots := true
 
@@ -49,8 +49,8 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
   )
   .settings(
     libraryDependencies ++= Seq(
-      "org.scalameta" %%% "munit" % "0.7.27",
-      "org.typelevel" %%% "cats-effect" % "3.1.1"
+      "org.scalameta" %%% "munit" % "0.7.29",
+      "org.typelevel" %%% "cats-effect" % "3.2.8"
     ),
     mimaPreviousArtifacts := Set.empty
   )
@@ -73,8 +73,8 @@ lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
   )
   .settings(
     libraryDependencies ++= Seq(
-      "org.scalameta" %%% "munit" % "0.7.27",
-      "org.typelevel" %%% "cats-effect" % "2.5.1"
+      "org.scalameta" %%% "munit" % "0.7.29",
+      "org.typelevel" %%% "cats-effect" % "2.5.3"
     ),
     mimaPreviousArtifacts := Set.empty
   )

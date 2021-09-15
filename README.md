@@ -1,4 +1,4 @@
-# munit-cats-effect
+# munit-cats-effect ![Continuous Integration](https://github.com/typelevel/munit-cats-effect/workflows/Continuous%20Integration/badge.svg)
 
 Integration library for [MUnit](https://scalameta.org/munit/) and [cats-effect](https://github.com/typelevel/cats-effect/).
 
@@ -59,6 +59,40 @@ class ExampleSuite extends CatsEffectSuite {
 ```
 
 There are more assertion functions like `interceptIO` and `interceptMessageIO` as well as syntax versions `intercept` and `interceptMessage`. See the `CatsEffectAssertions` trait for full details.
+
+Every assertion in `CatsEffectAssertions` for IO-value or SyncIO-value is an IO computation under the hood. If you are planning to use multiple assertions per one test suite, therefore, they should be composed. Otherwise will calculate only the last assertion.
+
+```scala
+import cats.syntax.all._
+import cats.effect.{IO, SyncIO}
+import munit.CatsEffectSuite
+
+class MultipleAssertionsExampleSuite extends CatsEffectSuite {
+  test("multiple IO-assertions should be composed") {
+    assertIO(IO(42), 42) *>
+      assertIO_(IO.unit)
+  }
+
+  test("multiple IO-assertions should be composed via for-comprehension") {
+    for {
+      _ <- assertIO(IO(42), 42)
+      _ <- assertIO_(IO.unit)
+    } yield ()       
+  }
+
+  test("multiple SyncIO-assertions should be composed") {
+    assertSyncIO(SyncIO(42), 42) *>
+      assertSyncIO_(SyncIO.unit)
+  }
+    
+  test("multiple SyncIO-assertions should be composed via for-comprehension") {
+    for {
+      _ <- assertSyncIO(SyncIO(42), 42)
+      _ <- assertSyncIO_(SyncIO.unit)
+    } yield ()       
+  }
+}
+```
 
 ## Suite-local fixtures
 
