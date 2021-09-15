@@ -42,9 +42,10 @@ lazy val root = project
   .settings(
     libraryDependencies ++= (
       if (ScalaArtifacts.isScala3(scalaVersion.value)) Nil
-      else Seq(
-        compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
-      )
+      else
+        Seq(
+          compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
+        )
     )
   )
 
@@ -58,9 +59,10 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
   .settings(
     libraryDependencies ++= (
       if (ScalaArtifacts.isScala3(scalaVersion.value)) Nil
-      else Seq(
-        compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
-      )
+      else
+        Seq(
+          compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
+        )
     ),
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.29",
@@ -88,9 +90,10 @@ lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
   .settings(
     libraryDependencies ++= (
       if (ScalaArtifacts.isScala3(scalaVersion.value)) Nil
-      else Seq(
-        compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
-      )
+      else
+        Seq(
+          compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
+        )
     ),
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.29",
