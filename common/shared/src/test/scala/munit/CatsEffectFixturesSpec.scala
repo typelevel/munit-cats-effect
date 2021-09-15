@@ -17,6 +17,7 @@
 package munit
 
 import cats.effect.{IO, Resource}
+import scala.concurrent.duration._
 
 class CatsEffectFixturesSpec extends CatsEffectSuite with CatsEffectAssertions {
 
@@ -26,12 +27,12 @@ class CatsEffectFixturesSpec extends CatsEffectSuite with CatsEffectAssertions {
   val fixture = UnsafeResourceSuiteLocalDeferredFixture(
     "fixture",
     Resource.make(
-      IO {
+      IO.sleep(1.millis) *> IO {
         acquired += 1
         ()
       }
     )(_ =>
-      IO {
+      IO.sleep(1.millis) *> IO {
         released += 1
         ()
       }
