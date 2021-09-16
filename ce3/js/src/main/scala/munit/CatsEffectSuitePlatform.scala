@@ -16,4 +16,10 @@
 
 package munit
 
-trait CatsEffectFixtures { self: CatsEffectSuite => }
+import cats.effect.IO
+
+private[munit] trait CatsEffectSuitePlatform { self: CatsEffectSuite =>
+
+  private[munit] def unsafeRunSyncOrForget[A](ioa: IO[A]): Unit = ioa.unsafeRunAndForget()
+
+}

@@ -23,6 +23,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 abstract class CatsEffectSuite
     extends FunSuite
+    with CatsEffectSuitePlatform
     with CatsEffectAssertions
     with CatsEffectFixtures
     with CatsEffectFunFixtures {
@@ -46,4 +47,9 @@ abstract class CatsEffectSuite
       { case e: SyncIO[_] => Future(e.unsafeRunSync())(munitExecutionContext) }
     )
 
+}
+
+object CatsEffectSuite {
+  private[munit] type Deferred[F[_], A] = cats.effect.kernel.Deferred[F, A]
+  private[munit] val Deferred = cats.effect.kernel.Deferred
 }
