@@ -6,7 +6,7 @@ ThisBuild / organizationName := "Typelevel"
 ThisBuild / publishGithubUser := "milanvdm"
 ThisBuild / publishFullName := "Milan van der Meer"
 
-ThisBuild / crossScalaVersions := List("3.0.2", "2.12.14", "2.13.6")
+ThisBuild / crossScalaVersions := List("3.0.2", "2.12.15", "2.13.6")
 
 ThisBuild / spiewakCiReleaseSnapshots := true
 
@@ -39,6 +39,15 @@ lazy val root = project
   .in(file("."))
   .aggregate(ce3.jvm, ce3.js, ce2.jvm, ce2.js)
   .enablePlugins(NoPublishPlugin, SonatypeCiReleasePlugin)
+  .settings(
+    libraryDependencies ++= (
+      if (ScalaArtifacts.isScala3(scalaVersion.value)) Nil
+      else
+        Seq(
+          compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
+        )
+    )
+  )
 
 lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
@@ -48,6 +57,13 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
     Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/test/scala"
   )
   .settings(
+    libraryDependencies ++= (
+      if (ScalaArtifacts.isScala3(scalaVersion.value)) Nil
+      else
+        Seq(
+          compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
+        )
+    ),
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.29",
       "org.typelevel" %%% "cats-effect" % "3.2.8"
@@ -72,6 +88,13 @@ lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
     Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/test/scala"
   )
   .settings(
+    libraryDependencies ++= (
+      if (ScalaArtifacts.isScala3(scalaVersion.value)) Nil
+      else
+        Seq(
+          compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
+        )
+    ),
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.29",
       "org.typelevel" %%% "cats-effect" % "2.5.3"
