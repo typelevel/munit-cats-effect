@@ -35,7 +35,7 @@ abstract class CatsEffectSuite
   override def munitValueTransforms: List[ValueTransform] =
     super.munitValueTransforms ++ List(munitIOTransform, munitSyncIOTransform)
 
-  private val munitIOTransform: ValueTransform =
+  private[munit] val munitIOTransform: ValueTransform =
     new ValueTransform(
       "IO",
       { case e: IO[_] => e.unsafeToFuture() }
