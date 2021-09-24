@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
+package munit
+
 import cats.effect.{IO, SyncIO}
-import munit.CatsEffectSuite
 
 class ExampleSuite extends CatsEffectSuite {
 
