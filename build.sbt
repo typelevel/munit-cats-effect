@@ -1,4 +1,4 @@
-ThisBuild / baseVersion := "0.4"
+ThisBuild / baseVersion := "1.0"
 
 ThisBuild / organization := "org.typelevel"
 ThisBuild / organizationName := "Typelevel"
