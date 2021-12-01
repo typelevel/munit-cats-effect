@@ -23,8 +23,8 @@ class CatsEffectSuiteSpec extends CatsEffectSuite {
 
   test("nested IO fail".fail) { IO(IO(1)) }
   test("nested IO and SyncIO fail".fail) { IO(SyncIO(1)) }
-  test("nested IO and Future fail".fail) { IO(Future(1)) }
+  test("nested IO and Future fail".fail) { IO(Future.successful(1)) }
   test("nested SyncIO fail".fail) { SyncIO(SyncIO(1)) }
   test("nested SyncIO and IO fail".fail) { SyncIO(IO(1)) }
-  test("nested SyncIO and Future fail".fail) { SyncIO(Future(1)) }
+  test("nested SyncIO and Future fail".fail) { SyncIO(Future.successful(1)) }
 }
