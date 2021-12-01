@@ -111,17 +111,17 @@ abstract class CatsEffectSuite
       case _: IO[_] =>
         err(
           "your test returns an `IO[IO[_]]`, which means the inner `IO` will not execute." ++
-            "Call `.flatten` if you want it to execute, or `.void` if you want to discard it"
+            " Call `.flatten` if you want it to execute, or `.void` if you want to discard it"
         )
       case _: SyncIO[_] =>
         err(
           "your test returns an `IO[SyncIO[_]]`, which means the inner `SyncIO` will not execute." ++
-            "Call `.flatMap(_.to[IO]) if you want it to execute, or `.void` if you want to discard it"
+            " Call `.flatMap(_.to[IO]) if you want it to execute, or `.void` if you want to discard it"
         )
       case _: Future[_] =>
         err(
-          "your test returns an `IO[Future[_]]`, which means the inner `Future` might not execute" ++
-            "Surround it with `IO.fromFuture` if you want it to execute, or call `.void` if you want to discard it"
+          "your test returns an `IO[Future[_]]`, which means the inner `Future` might not execute." ++
+            " Surround it with `IO.fromFuture` if you want it to execute, or call `.void` if you want to discard it"
         )
       case v => v.pure[IO]
     }
@@ -135,17 +135,17 @@ abstract class CatsEffectSuite
       case _: IO[_] =>
         err(
           "your test returns a `SyncIO[IO[_]]`, which means the inner `IO` will not execute." ++
-            "Call `.to[IO].flatten` if you want it to execute, or `.void` if you want to discard it"
+            " Call `.to[IO].flatten` if you want it to execute, or `.void` if you want to discard it"
         )
       case _: SyncIO[_] =>
         err(
           "your test returns a `SyncIO[SyncIO[_]]`, which means the inner `SyncIO` will not execute." ++
-            "Call `.flatten` if you want it to execute, or `.void` if you want to discard it"
+            " Call `.flatten` if you want it to execute, or `.void` if you want to discard it"
         )
       case _: Future[_] =>
         err(
           "your test returns a `SyncIO[Future[_]]`, which means the inner `Future` might not execute." ++
-            "Change it to `IO.fromFuture(yourTest.to[IO])` if you want it to execute, or call `.void` if you want to discard it"
+            " Change it to `IO.fromFuture(yourTest.to[IO])` if you want it to execute, or call `.void` if you want to discard it"
         )
       case v => v.pure[SyncIO]
     }
