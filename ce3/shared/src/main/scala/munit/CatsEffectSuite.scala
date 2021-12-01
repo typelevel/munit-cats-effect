@@ -35,10 +35,67 @@ abstract class CatsEffectSuite
   override def munitValueTransforms: List[ValueTransform] =
     super.munitValueTransforms ++ List(munitIOTransform, munitSyncIOTransform)
 
+  //  "fail",
+  //     { t =>
+  //       if (t.tags(Fail)) {
+  //         t.withBodyMap(
+  //           _.transformCompat {
+  //             case Success(value) =>
+  //               Failure(
+  //                 throw new FailException(
+  //                   munitLines.formatLine(
+  //                     t.location,
+  //                     "expected failure but test passed"
+  //                   ),
+  //                   t.location
+  //                 )
+  //               )
+  //             case Failure(exception) =>
+  //               Success(())
+  //           }(munitExecutionContext)
+  //         )
+  //       } else {
+  //         t
+  //       }
+  //     }
+  //   )
+
+  // def munitFlakyOK: Boolean = "true" == System.getenv("MUNIT_FLAKY_OK")
+  // final def munitFlakyTransform: TestTransform =
+  //   new TestTransform(
+  //     "flaky",
+  //     { t =>
+  //       if (t.tags(Flaky)) {
+  //         t.withBodyMap(_.transformCompat {
+  //           case Success(value) => Success(value)
+  //           case Failure(exception) =>
+  //             if (munitFlakyOK) {
+  //               Success(new TestValues.FlakyFailure(exception))
+  //             } else {
+  //               throw exception
+  //             }
+  //         }(munitExecutionContext))
+  //       } else {
+  //         t
+  //       }
+  //     }
+
   private val munitIOTransform: ValueTransform =
     new ValueTransform(
       "IO",
-      { case e: IO[_] => e.unsafeToFuture() }
+      { case e: IO[_] =>
+        e.flatMap {
+          case _: IO[_] =>
+            IO.raiseError[Any](
+              new Exception(
+                "your test returns an `IO[IO[_]]`, which means the inner `IO` won't execute. Call `.flatten` if you want it to execute, or `.void` if you want to discard it"
+              )
+            )
+          case _: SyncIO[_] => ???
+          case _: Future[_] => ???
+          case v            => IO.pure(v)
+        }.unsafeToFuture()
+      }
     )
 
   private val munitSyncIOTransform: ValueTransform =
