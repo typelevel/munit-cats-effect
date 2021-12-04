@@ -17,8 +17,8 @@
 package munit
 
 import cats.effect.{ContextShift, IO, SyncIO, Timer}
-import cats.syntax.all._
 import scala.concurrent.{Future, ExecutionContext}
+import munit.internal.NestingChecks.{checkNestingIO, checkNestingSyncIO}
 
 abstract class CatsEffectSuite
     extends FunSuite
@@ -47,64 +47,6 @@ abstract class CatsEffectSuite
       "SyncIO",
       { case e: SyncIO[_] => Future(checkNestingSyncIO(e).unsafeRunSync())(munitExecutionContext) }
     )
-
-  // MUnit works by automatically chaining value transforms of shape `Any => Future[Any]`,
-  // and we rely on this behavior to chain our `IO ~> Future` transform into the rest of MUnit.
-  //
-  // Unfortunately, this has an unforeseen consequence in CatsEffectSuite:
-  // if you return `IO[IO[A]]` by accident, for example by using `map` instead of `flatMap`,
-  // MUnit will execute both the inner and outer `IO` by applying our `IO` transform twice.
-  //
-  // This breaks the `IO` mental model, and can lead to very surprising behaviour, e.g see:
-  //  https://github.com/typelevel/munit-cats-effect/issues/159.
-  //
-  // This method checks for such a case, and fails the test with an actionable message.
-  private def checkNestingIO(fa: IO[_]): IO[Any] = {
-    def err(msg: String) = IO.raiseError[Any](new Exception(msg))
-
-    fa.flatMap {
-      case _: IO[_] =>
-        err(
-          "your test returns an `IO[IO[_]]`, which means the inner `IO` will not execute." ++
-            " Call `.flatten` if you want it to execute, or `.void` if you want to discard it"
-        )
-      case _: SyncIO[_] =>
-        err(
-          "your test returns an `IO[SyncIO[_]]`, which means the inner `SyncIO` will not execute." ++
-            " Call `.flatMap(_.to[IO]) if you want it to execute, or `.void` if you want to discard it"
-        )
-      case _: Future[_] =>
-        err(
-          "your test returns an `IO[Future[_]]`, which means the inner `Future` might not execute." ++
-            " Surround it with `IO.fromFuture` if you want it to execute, or call `.void` if you want to discard it"
-        )
-      case v => v.pure[IO]
-    }
-  }
-
-  // same as above, but for SyncIO
-  private def checkNestingSyncIO(fa: SyncIO[_]): SyncIO[Any] = {
-    def err(msg: String) = SyncIO.raiseError[Any](new Exception(msg))
-
-    fa.flatMap {
-      case _: IO[_] =>
-        err(
-          "your test returns a `SyncIO[IO[_]]`, which means the inner `IO` will not execute." ++
-            " Call `.to[IO].flatten` if you want it to execute, or `.void` if you want to discard it"
-        )
-      case _: SyncIO[_] =>
-        err(
-          "your test returns a `SyncIO[SyncIO[_]]`, which means the inner `SyncIO` will not execute." ++
-            " Call `.flatten` if you want it to execute, or `.void` if you want to discard it"
-        )
-      case _: Future[_] =>
-        err(
-          "your test returns a `SyncIO[Future[_]]`, which means the inner `Future` might not execute." ++
-            " Change it to `IO.fromFuture(yourTest.to[IO])` if you want it to execute, or call `.void` if you want to discard it"
-        )
-      case v => v.pure[SyncIO]
-    }
-  }
 }
 
 object CatsEffectSuite {
