@@ -17,8 +17,8 @@
 package munit
 
 import cats.effect.{ContextShift, IO, SyncIO, Timer}
-
 import scala.concurrent.{Future, ExecutionContext}
+import munit.internal.NestingChecks.{checkNestingIO, checkNestingSyncIO}
 
 abstract class CatsEffectSuite
     extends FunSuite
@@ -39,15 +39,14 @@ abstract class CatsEffectSuite
   private val munitIOTransform: ValueTransform =
     new ValueTransform(
       "IO",
-      { case e: IO[_] => e.unsafeToFuture() }
+      { case e: IO[_] => checkNestingIO(e).unsafeToFuture() }
     )
 
   private val munitSyncIOTransform: ValueTransform =
     new ValueTransform(
       "SyncIO",
-      { case e: SyncIO[_] => Future(e.unsafeRunSync())(munitExecutionContext) }
+      { case e: SyncIO[_] => Future(checkNestingSyncIO(e).unsafeRunSync())(munitExecutionContext) }
     )
-
 }
 
 object CatsEffectSuite {
