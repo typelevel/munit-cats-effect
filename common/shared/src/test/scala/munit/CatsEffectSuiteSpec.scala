@@ -17,68 +17,14 @@
 package munit
 
 import cats.effect.{IO, SyncIO}
-
-import scala.concurrent.duration._
+import scala.concurrent.Future
 
 class CatsEffectSuiteSpec extends CatsEffectSuite {
 
-  test("nested IO fail".fail) {
-    IO {
-      IO.sleep(2.millis)
-        .flatMap { _ =>
-          IO {
-            IO.sleep(2.millis)
-              .flatMap { _ =>
-                IO {
-                  IO.sleep(2.millis)
-                    .map(_ => assertEquals(false, true))
-                }
-              }
-          }
-        }
-    }
-  }
-  test("nested IO success") {
-    IO {
-      IO.sleep(2.millis)
-        .flatMap { _ =>
-          IO {
-            IO.sleep(2.millis)
-              .flatMap { _ =>
-                IO {
-                  IO.sleep(2.millis)
-                    .map(_ => assertEquals(true, true))
-                }
-              }
-          }
-        }
-    }
-  }
-
-  test("nested SyncIO fail".fail) {
-    SyncIO
-      .pure(())
-      .flatMap { _ =>
-        SyncIO
-          .pure(())
-          .flatMap { _ =>
-            SyncIO
-              .pure(())
-              .map(_ => assertEquals(false, true))
-          }
-      }
-  }
-  test("nested SyncIO success") {
-    SyncIO
-      .pure(())
-      .flatMap { _ =>
-        SyncIO
-          .pure(())
-          .flatMap { _ =>
-            SyncIO
-              .pure(())
-              .map(_ => assertEquals(true, true))
-          }
-      }
-  }
+  test("nested IO fail".fail) { IO(IO(1)) }
+  test("nested IO and SyncIO fail".fail) { IO(SyncIO(1)) }
+  test("nested IO and Future fail".fail) { IO(Future.successful(1)) }
+  test("nested SyncIO fail".fail) { SyncIO(SyncIO(1)) }
+  test("nested SyncIO and IO fail".fail) { SyncIO(IO(1)) }
+  test("nested SyncIO and Future fail".fail) { SyncIO(Future.successful(1)) }
 }
