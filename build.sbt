@@ -1,53 +1,13 @@
-ThisBuild / baseVersion := "1.0"
+ThisBuild / tlBaseVersion := "1.0"
 
-ThisBuild / organization := "org.typelevel"
-ThisBuild / organizationName := "Typelevel"
-
-ThisBuild / publishGithubUser := "milanvdm"
-ThisBuild / publishFullName := "Milan van der Meer"
+ThisBuild / developers += tlGitHubDev("milanvdm", "Milan van der Meer")
+ThisBuild / startYear := Some(2021)
 
 ThisBuild / crossScalaVersions := List("3.0.2", "2.12.15", "2.13.8")
 
-ThisBuild / spiewakCiReleaseSnapshots := true
+ThisBuild / tlFatalWarningsInCi := false
 
-ThisBuild / spiewakMainBranches := List("main")
-
-ThisBuild / githubWorkflowBuildPreamble ++=
-  Seq(
-    WorkflowStep.Sbt(List("scalafmtCheckAll")),
-    WorkflowStep.Sbt(List("scalafmtSbtCheck"))
-  )
-
-ThisBuild / homepage := Some(url("https://github.com/typelevel/munit-cats-effect"))
-
-ThisBuild / scmInfo := Some(
-  ScmInfo(
-    url("https://github.com/typelevel/munit-cats-effect"),
-    "git@github.com:typelevel/munit-cats-effect.git"
-  )
-)
-
-ThisBuild / licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
-
-ThisBuild / scalafmtOnCompile := true
-
-ThisBuild / testFrameworks += new TestFramework("munit.Framework")
-
-ThisBuild / fatalWarningsInCI := false
-
-lazy val root = project
-  .in(file("."))
-  .aggregate(ce3.jvm, ce3.js, ce2.jvm, ce2.js)
-  .enablePlugins(NoPublishPlugin, SonatypeCiReleasePlugin)
-  .settings(
-    libraryDependencies ++= (
-      if (ScalaArtifacts.isScala3(scalaVersion.value)) Nil
-      else
-        Seq(
-          compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
-        )
-    )
-  )
+lazy val root = tlCrossRootProject.aggregate(ce3, ce2)
 
 lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Full)
@@ -57,13 +17,6 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
     Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/test/scala"
   )
   .settings(
-    libraryDependencies ++= (
-      if (ScalaArtifacts.isScala3(scalaVersion.value)) Nil
-      else
-        Seq(
-          compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
-        )
-    ),
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.29",
       "org.typelevel" %%% "cats-effect" % "3.3.4"
@@ -88,13 +41,6 @@ lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
     Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/shared/src/test/scala"
   )
   .settings(
-    libraryDependencies ++= (
-      if (ScalaArtifacts.isScala3(scalaVersion.value)) Nil
-      else
-        Seq(
-          compilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
-        )
-    ),
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.29",
       "org.typelevel" %%% "cats-effect" % "2.5.4"
