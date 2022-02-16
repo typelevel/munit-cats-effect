@@ -96,11 +96,11 @@ trait CatsEffectAssertions { self: Assertions =>
   /** Intercepts a `Throwable` being thrown inside the provided `IO`.
     *
     * @example
-    * {{{
+    *   {{{
     *   val io = IO.raiseError[Unit](MyException("BOOM!"))
     *
     *   interceptIO[MyException](io)
-    * }}}
+    *   }}}
     *
     * or
     *
@@ -116,11 +116,11 @@ trait CatsEffectAssertions { self: Assertions =>
   /** Intercepts a `Throwable` with a certain message being thrown inside the provided `IO`.
     *
     * @example
-    * {{{
+    *   {{{
     *   val io = IO.raiseError[Unit](MyException("BOOM!"))
     *
     *   interceptIO[MyException]("BOOM!")(io)
-    * }}}
+    *   }}}
     *
     * or
     *
@@ -185,11 +185,11 @@ trait CatsEffectAssertions { self: Assertions =>
   /** Intercepts a `Throwable` being thrown inside the provided `SyncIO`.
     *
     * @example
-    * {{{
+    *   {{{
     *   val io = SyncIO.raiseError[Unit](MyException("BOOM!"))
     *
     *   interceptSyncIO[MyException](io)
-    * }}}
+    *   }}}
     *
     * or
     *
@@ -207,11 +207,11 @@ trait CatsEffectAssertions { self: Assertions =>
   /** Intercepts a `Throwable` with a certain message being thrown inside the provided `SyncIO`.
     *
     * @example
-    * {{{
+    *   {{{
     *   val io = SyncIO.raiseError[Unit](MyException("BOOM!"))
     *
     *   interceptSyncIO[MyException]("BOOM!")(io)
-    * }}}
+    *   }}}
     *
     * or
     *
@@ -298,11 +298,11 @@ trait CatsEffectAssertions { self: Assertions =>
     /** Intercepts a `Throwable` being thrown inside this effect.
       *
       * @example
-      * {{{
+      *   {{{
       *   val io = IO.raiseError[Unit](MyException("BOOM!"))
       *
       *   io.intercept[MyException]
-      * }}}
+      *   }}}
       */
     def intercept[T <: Throwable](implicit T: ClassTag[T], loc: Location): IO[T] =
       interceptIO[T](io)
@@ -310,11 +310,11 @@ trait CatsEffectAssertions { self: Assertions =>
     /** Intercepts a `Throwable` with a certain message being thrown inside this effect.
       *
       * @example
-      * {{{
+      *   {{{
       *   val io = IO.raiseError[Unit](MyException("BOOM!"))
       *
       *   io.intercept[MyException]("BOOM!")
-      * }}}
+      *   }}}
       */
     def interceptMessage[T <: Throwable](
         expectedExceptionMessage: String
@@ -377,11 +377,11 @@ trait CatsEffectAssertions { self: Assertions =>
     /** Intercepts a `Throwable` being thrown inside this effect.
       *
       * @example
-      * {{{
+      *   {{{
       *   val io = SyncIO.raiseError[Unit](MyException("BOOM!"))
       *
       *   io.intercept[MyException]
-      * }}}
+      *   }}}
       */
     def intercept[T <: Throwable](implicit T: ClassTag[T], loc: Location): SyncIO[T] =
       interceptSyncIO[T](io)
@@ -389,11 +389,11 @@ trait CatsEffectAssertions { self: Assertions =>
     /** Intercepts a `Throwable` with a certain message being thrown inside this effect.
       *
       * @example
-      * {{{
+      *   {{{
       *   val io = SyncIO.raiseError[Unit](MyException("BOOM!"))
       *
       *   io.intercept[MyException]("BOOM!")
-      * }}}
+      *   }}}
       */
     def interceptMessage[T <: Throwable](
         expectedExceptionMessage: String
