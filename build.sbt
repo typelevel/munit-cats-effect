@@ -22,15 +22,8 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
       "org.typelevel" %%% "cats-effect" % "3.3.5"
     ),
     // we are checking binary compatibility from the 1.0.6 version
-    mimaPreviousArtifacts ~= { _.filter {
-      m =>
-        val (majorV, minorV, patchV) = {
-          val x = m.revision.split("\\.").toList.map(_.toInt)
-
-          (x.headOption, x.lift(1), x.lift(2))
-        }
-
-        if (majorV.contains(1) && minorV.contains(0)) patchV.exists(_ >= 6) else true
+    mimaPreviousArtifacts ~= { _.filter { m =>
+        VersionNumber(m.revision).matchesSemVer(SemanticSelector(">=1.0.6"))
       }
     }
   )
@@ -57,15 +50,8 @@ lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
       "org.typelevel" %%% "cats-effect" % "2.5.4"
     ),
     // we are checking binary compatibility from the 1.0.6 version
-    mimaPreviousArtifacts ~= { _.filter {
-      m =>
-        val (majorV, minorV, patchV) = {
-          val x = m.revision.split("\\.").toList.map(_.toInt)
-
-          (x.headOption, x.lift(1), x.lift(2))
-        }
-
-        if (majorV.contains(1) && minorV.contains(0)) patchV.exists(_ >= 6) else true
+    mimaPreviousArtifacts ~= { _.filter { m =>
+        VersionNumber(m.revision).matchesSemVer(SemanticSelector(">=1.0.6"))
       }
     }
   )
