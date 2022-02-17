@@ -21,7 +21,12 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
       "org.scalameta" %%% "munit" % "0.7.29",
       "org.typelevel" %%% "cats-effect" % "3.3.5"
     ),
-    mimaPreviousArtifacts := Set.empty
+    // we are checking binary compatibility from the 1.0.6 version
+    mimaPreviousArtifacts ~= {
+      _.filter { m =>
+        VersionNumber(m.revision).matchesSemVer(SemanticSelector(">=1.0.6"))
+      }
+    }
   )
   .jvmSettings(
     Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/jvm/src/main/scala",
@@ -45,7 +50,12 @@ lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
       "org.scalameta" %%% "munit" % "0.7.29",
       "org.typelevel" %%% "cats-effect" % "2.5.4"
     ),
-    mimaPreviousArtifacts := Set.empty
+    // we are checking binary compatibility from the 1.0.6 version
+    mimaPreviousArtifacts ~= {
+      _.filter { m =>
+        VersionNumber(m.revision).matchesSemVer(SemanticSelector(">=1.0.6"))
+      }
+    }
   )
   .jvmSettings(
     Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/jvm/src/main/scala",
