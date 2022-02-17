@@ -7,6 +7,11 @@ ThisBuild / crossScalaVersions := List("3.0.2", "2.12.15", "2.13.8")
 
 ThisBuild / tlFatalWarningsInCi := false
 
+lazy val docs = project
+  .in(file("site"))
+  .dependsOn(ce3.jvm)
+  .enablePlugins(TypelevelSitePlugin)
+
 lazy val root = tlCrossRootProject.aggregate(ce3, ce2)
 
 lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
