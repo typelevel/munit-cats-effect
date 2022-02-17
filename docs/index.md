@@ -1,5 +1,4 @@
 # munit-cats-effect
-![Continuous Integration](https://github.com/typelevel/munit-cats-effect/workflows/Continuous%20Integration/badge.svg)
 
 Integration library for [MUnit](https://scalameta.org/munit/) and [cats-effect](https://github.com/typelevel/cats-effect/).
 
@@ -8,13 +7,13 @@ Integration library for [MUnit](https://scalameta.org/munit/) and [cats-effect](
 Cats Effect 2 integration is provided via:
 
 ```scala
-libraryDependencies += "org.typelevel" %%% "munit-cats-effect-2" % "1.0.0" % "test"
+libraryDependencies += "org.typelevel" %%% "munit-cats-effect-2" % "@VERSION@" % "test"
 ```
 
 Cats Effect 3 integration is provided via:
 
 ```scala
-libraryDependencies += "org.typelevel" %%% "munit-cats-effect-3" % "1.0.0" % "test"
+libraryDependencies += "org.typelevel" %%% "munit-cats-effect-3" % "@VERSION@" % "test"
 ```
 
 Builds are available for Scala 2.12, 2.13, and 3 for both the JVM and Scala.js.
