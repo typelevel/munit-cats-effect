@@ -64,7 +64,8 @@ lazy val ce2 = crossProject(JSPlatform, JVMPlatform)
   .jsSettings(
     Compile / unmanagedSourceDirectories += baseDirectory.value / "../../common/js/src/main/scala",
     Test / unmanagedSourceDirectories += baseDirectory.value / "../../common/js/src/test/scala",
-    scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
+    scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)),
+    scalacOptions += "-P:scalajs:nowarnGlobalExecutionContext"
   )
 
 addCommandAlias("fmt", """scalafmtSbt;scalafmtAll""")
