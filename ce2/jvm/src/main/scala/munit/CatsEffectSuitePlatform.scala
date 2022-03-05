@@ -18,11 +18,15 @@ package munit
 
 import cats.effect.IO
 
+import scala.concurrent.ExecutionContext
+
 private[munit] trait CatsEffectSuitePlatform { self: CatsEffectSuite =>
 
   private[munit] def unsafeRunSyncOrForget[A](ioa: IO[A]): Unit = {
     ioa.unsafeRunSync()
     ()
   }
+
+  private[munit] def suiteExecutionContext: ExecutionContext = ExecutionContext.global
 
 }

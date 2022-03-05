@@ -17,9 +17,14 @@
 package munit
 
 import cats.effect.IO
+import org.scalajs.macrotaskexecutor.MacrotaskExecutor
+
+import scala.concurrent.ExecutionContext
 
 private[munit] trait CatsEffectSuitePlatform { self: CatsEffectSuite =>
 
   private[munit] def unsafeRunSyncOrForget[A](ioa: IO[A]): Unit = ioa.unsafeRunAsyncAndForget()
+
+  private[munit] def suiteExecutionContext: ExecutionContext = MacrotaskExecutor
 
 }

@@ -27,11 +27,13 @@ abstract class CatsEffectSuite
     with CatsEffectFixtures
     with CatsEffectFunFixtures {
 
+  private val ec: ExecutionContext = suiteExecutionContext
+
   implicit def munitContextShift: ContextShift[IO] =
-    IO.contextShift(ExecutionContext.global)
+    IO.contextShift(ec)
 
   implicit def munitTimer: Timer[IO] =
-    IO.timer(ExecutionContext.global)
+    IO.timer(ec)
 
   override def munitValueTransforms: List[ValueTransform] =
     super.munitValueTransforms ++ List(munitIOTransform, munitSyncIOTransform)
