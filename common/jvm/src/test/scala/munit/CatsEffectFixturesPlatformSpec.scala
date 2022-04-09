@@ -33,7 +33,8 @@ class CatsEffectFixturesPlatformSpec extends CatsEffectSuite with CatsEffectAsse
       }
     )(_ =>
       IO.sleep(1.millis) *> IO {
-        released += 1
+        assertEquals(acquired, 1)
+        assertEquals(released, 1)
         ()
       }
     )
@@ -53,7 +54,9 @@ class CatsEffectFixturesPlatformSpec extends CatsEffectSuite with CatsEffectAsse
 
   override def afterAll(): Unit = {
     assertEquals(acquired, 1)
-    assertEquals(released, 1)
+    assertEquals(released, 0) // not yet released
+    released += 1
+    ()
   }
 
   test("first test") {
