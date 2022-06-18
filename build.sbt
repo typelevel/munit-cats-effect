@@ -5,8 +5,6 @@ ThisBuild / startYear := Some(2021)
 
 ThisBuild / crossScalaVersions := List("3.1.2", "2.12.16", "2.13.8")
 
-ThisBuild / tlFatalWarningsInCi := false
-
 lazy val docs = project
   .in(file("site"))
   .dependsOn(core.jvm)
