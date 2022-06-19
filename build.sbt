@@ -13,7 +13,7 @@ lazy val docs = project
 lazy val root = tlCrossRootProject.aggregate(core)
 
 lazy val core = crossProject(JSPlatform, JVMPlatform)
-  .crossType(CrossType.Full)
+  .crossType(CrossType.Pure)
   .in(file("core"))
   .settings(
     name := "munit-cats-effect",

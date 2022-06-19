@@ -16,43 +16,34 @@
 
 package munit
 
-import cats.effect.{IO, SyncIO, Resource}
-import cats.syntax.flatMap._
+import cats.effect.IO
+import cats.effect.Resource
+import cats.effect.SyncIO
 
 import scala.concurrent.Promise
 import scala.concurrent.duration._
 
 class CatsEffectFunFixturesSpec extends CatsEffectSuite with CatsEffectFunFixtures {
   val latch: Promise[Unit] = Promise[Unit]()
-  var completedFromTest: Option[Boolean] = None
-  var completedFromTeardown: Option[Boolean] = None
 
-  var completedFromResourceAcquire: Option[Boolean] = None
-  var completedFromResourceRelease: Option[Boolean] = None
+  @volatile var completedFromTest: Option[Boolean] = None
+
+  @volatile var completedFromResourceAcquire: Option[Boolean] = None
+  @volatile var completedFromResourceRelease: Option[Boolean] = None
 
   val latchOnTeardown: SyncIO[FunFixture[String]] =
-    ResourceFixture[String](
-      resource = Resource.make[IO, String](
-        IO {
-          completedFromResourceAcquire = Some(true)
-          "test"
-        }
-      )(_ =>
-        IO {
-          completedFromResourceRelease = Some(true)
-        }
-      ),
-      setup = { (_: TestOptions, _: String) =>
-        IO {
-          completedFromResourceAcquire = Some(false)
-        }
-      },
-      teardown = { (_: String) =>
-        IO {
-          completedFromResourceRelease = Some(false)
-          completedFromTeardown = Some(latch.trySuccess(()));
-        }
-      }
+    ResourceFunFixture[String](
+      Resource
+        .make[IO, String](
+          IO {
+            completedFromResourceAcquire = Some(true)
+            "test"
+          }
+        )(_ =>
+          IO {
+            completedFromResourceRelease = Some(true)
+          }
+        )
     )
 
   override def afterAll(): Unit = {
@@ -62,8 +53,6 @@ class CatsEffectFunFixturesSpec extends CatsEffectSuite with CatsEffectFunFixtur
     assertEquals(completedFromResourceRelease, Some(true))
     // promise was completed first by the test
     assertEquals(completedFromTest, Some(true))
-    // and then there was a completion attempt by the teardown
-    assertEquals(completedFromTeardown, Some(false))
   }
 
   latchOnTeardown.test("teardown runs only after test completes") { _ =>
