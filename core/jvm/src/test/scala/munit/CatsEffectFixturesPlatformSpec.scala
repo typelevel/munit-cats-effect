@@ -17,6 +17,8 @@
 package munit
 
 import cats.effect.{IO, Resource}
+import munit.catseffect.ResourceFixture.FixtureNotInstantiatedException
+
 import scala.concurrent.duration._
 
 class CatsEffectFixturesPlatformSpec extends CatsEffectSuite with CatsEffectAssertions {
@@ -66,7 +68,7 @@ class CatsEffectFixturesPlatformSpec extends CatsEffectSuite with CatsEffectAsse
 
   test("throws exception") {
     IO(uninitializedFixture())
-      .interceptMessage[ResourceSuiteLocalFixture.FixtureNotInstantiatedException](
+      .interceptMessage[FixtureNotInstantiatedException](
         "The fixture `uninitialized-fixture` was not instantiated. Override `munitFixtures` and include a reference to this fixture."
       )
   }

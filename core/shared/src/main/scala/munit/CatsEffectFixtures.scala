@@ -16,37 +16,27 @@
 
 package munit
 
-import cats.effect.{IO, Resource}
+import cats.effect.IO
+import cats.effect.Resource
+import munit.catseffect.IOFixture
+import munit.catseffect.ResourceFixture
 
-trait CatsEffectFixtures extends CatsEffectFixturesPlatform { self: CatsEffectSuite =>
+trait CatsEffectFixtures {
 
-  import CatsEffectSuite.Deferred
+  object ResourceTestLocalFixture {
+    def apply[A](name: String, resource: Resource[IO, A]): IOFixture[A] =
+      ResourceFixture.testLocal(name, resource)
+  }
 
-  /** Similar to `ResourceSuiteLocalFixture`, but supported on both JVM and JS via several caveats.
-    * Instead of directly providing `T` provides a (memoized) `IO[T]` that is backed by a
-    * `Deferred[T]`. It is unsafe because on JS the resource is closed concurrently without
-    * backpressure,
-    * i.e. the suite will complete even while the resource has not closed yet. On JVM it is
-    * semantically equivalent to `ResourceSuiteLocalFixture`. Note also that constructing this
-    * fixture is impure because it unsafely allocates a `Deferred`.
-    */
+  object ResourceSuiteLocalFixture {
+    def apply[A](name: String, resource: Resource[IO, A]): IOFixture[A] =
+      ResourceFixture.suiteLocal(name, resource)
+  }
+
+  @deprecated("Use ResourceSuiteLocalFixture", "2.0.0")
   object UnsafeResourceSuiteLocalDeferredFixture {
-
-    def apply[T](name: String, resource: Resource[IO, T]): Fixture[IO[T]] =
-      new Fixture[IO[T]](name) {
-        val value: Deferred[IO, (T, IO[Unit])] = Deferred.unsafe
-
-        def apply(): IO[T] = value.get.map(_._1)
-
-        override def beforeAll(): Unit = {
-          val resourceEffect = resource.allocated.flatMap(value.complete)
-          unsafeRunSyncOrForget(resourceEffect)
-        }
-
-        override def afterAll(): Unit = {
-          unsafeRunSyncOrForget(value.get.flatMap(_._2))
-        }
-      }
+    def apply[A](name: String, resource: Resource[IO, A]): IOFixture[IO[A]] =
+      ResourceSuiteLocalFixture(name, resource.map(IO.pure))
   }
 
 }

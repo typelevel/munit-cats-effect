@@ -16,51 +16,49 @@
 
 package munit
 
-import cats.effect.{IO, SyncIO, Resource}
-import cats.syntax.flatMap._
-
-import scala.concurrent.Promise
+import cats.effect.IO
+import cats.effect.Resource
+import cats.effect.SyncIO
+import cats.effect.kernel.Deferred
+import cats.syntax.all._
 
 trait CatsEffectFunFixtures extends FunFixtures { self: CatsEffectSuite =>
 
+  @deprecated("Use ResourceFunFixture", "2.0.0")
   object ResourceFixture {
+    def apply[A](
+        resource: Resource[IO, A]
+    ): SyncIO[FunFixture[A]] = ResourceFunFixture(_ => resource)
 
-    def apply[T](
-        resource: Resource[IO, T]
-    ): SyncIO[FunFixture[T]] =
-      apply(
-        resource,
-        (_, _) => IO.unit,
-        _ => IO.unit
-      )
-
+    @deprecated("ResourceFunFixture(TestOptions => Resource[IO, T])", "2.0.0")
     def apply[T](
         resource: Resource[IO, T],
         setup: (TestOptions, T) => IO[Unit],
         teardown: T => IO[Unit]
-    ): SyncIO[FunFixture[T]] = SyncIO {
-      val promise = Promise[IO[Unit]]()
-
-      FunFixture.async(
-        setup = { testOptions =>
-          val resourceEffect = resource.allocated
-          val setupEffect =
-            resourceEffect
-              .map { case (t, release) =>
-                promise.success(release)
-                t
-              }
-              .flatTap(t => setup(testOptions, t))
-
-          setupEffect.unsafeToFuture()
-        },
-        teardown = { (argument: T) =>
-          teardown(argument)
-            .flatMap(_ => IO.fromFuture(IO(promise.future)).flatten)
-            .unsafeToFuture()
-        }
-      )
+    ): SyncIO[FunFixture[T]] = ResourceFunFixture { options =>
+      resource.flatTap(t => Resource.make(setup(options, t))(_ => teardown(t)))
     }
+  }
+
+  object ResourceFunFixture {
+
+    def apply[A](
+        resource: Resource[IO, A]
+    ): SyncIO[FunFixture[A]] = apply(_ => resource)
+
+    def apply[A](resource: TestOptions => Resource[IO, A]): SyncIO[FunFixture[A]] =
+      Deferred.in[SyncIO, IO, IO[Unit]].map { deferred =>
+        FunFixture.async(
+          setup = { testOptions =>
+            resource(testOptions).allocated
+              .flatMap { case (a, release) =>
+                deferred.complete(release).as(a)
+              }
+              .unsafeToFuture()
+          },
+          teardown = { _ => deferred.get.flatten.unsafeToFuture() }
+        )
+      }
 
   }
 
