@@ -45,19 +45,18 @@ object ResourceFixture {
 
   def suiteLocal[A](name: String, resource: Resource[IO, A]): IOFixture[A] =
     new IOFixture[A](name) {
-      @volatile var value: A = _
-      @volatile var release: IO[Unit] = IO.unit
+      @volatile var value: Option[(A, IO[Unit])] = None
 
-      def apply() = value
-
-      override def beforeAll() = resource.allocated.flatMap { case (a, release) =>
-        IO {
-          value = a
-          this.release = release
-        }
+      def apply() = value match {
+        case Some(v) => v._1
+        case None    => throw new FixtureNotInstantiatedException(name)
       }
 
-      override def afterAll() = release
+      override def beforeAll() = resource.allocated.flatMap { value =>
+        IO(this.value = Some(value))
+      }
+
+      override def afterAll() = value.fold(IO.unit)(_._2)
     }
 
 }
