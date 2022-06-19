@@ -46,17 +46,35 @@ class CatsEffectFixturesSpec extends CatsEffectSuite with CatsEffectAssertions {
     Resource.make(IO.unit)(_ => IO.unit)
   )
 
-  override def munitFixtures = List(fixture)
+  object AssertBeforeFixture extends Fixture[Unit]("assertBefore") {
+    def apply() = ()
 
-  override def beforeAll(): Unit = {
-    assertEquals(acquired, 0)
-    assertEquals(released, 0)
+    override def beforeAll(): Unit = {
+      assertEquals(acquired, 0)
+      assertEquals(released, 0)
+    }
+
+    override def afterAll(): Unit = {
+      assertEquals(acquired, 1)
+      assertEquals(released, 0)
+    }
   }
 
-  override def afterAll(): Unit = {
-    assertEquals(acquired, 1)
-    assertEquals(released, 1)
+  object AssertAfterFixture extends Fixture[Unit]("assertAfter") {
+    def apply() = ()
+
+    override def beforeAll(): Unit = {
+      assertEquals(acquired, 1)
+      assertEquals(released, 0)
+    }
+
+    override def afterAll(): Unit = {
+      assertEquals(acquired, 1)
+      assertEquals(released, 1)
+    }
   }
+
+  override def munitFixtures = List[AnyFixture[_]](AssertBeforeFixture, fixture, AssertAfterFixture)
 
   test("first test") {
     IO(fixture()).assertEquals(())
