@@ -17,52 +17,40 @@
 package munit
 
 import cats.effect.IO
+import cats.effect.Ref
 import cats.effect.Resource
 import cats.effect.SyncIO
 
-import scala.concurrent.Promise
 import scala.concurrent.duration._
 
 class CatsEffectFunFixturesSpec extends CatsEffectSuite with CatsEffectFunFixtures {
-  val latch: Promise[Unit] = Promise[Unit]()
+  val counter: Ref[IO, Int] = Ref.unsafe[IO, Int](0)
 
-  @volatile var completedFromTest: Option[Boolean] = None
+  @volatile var acquired: Option[Int] = None
+  @volatile var tested: Option[Int] = None
+  @volatile var released: Option[Int] = None
 
-  @volatile var completedFromResourceAcquire: Option[Boolean] = None
-  @volatile var completedFromResourceRelease: Option[Boolean] = None
-
-  val latchOnTeardown: SyncIO[FunFixture[String]] =
-    ResourceFunFixture[String](
+  val countingFixture: SyncIO[FunFixture[Unit]] =
+    ResourceFunFixture[Unit](
       Resource
-        .make[IO, String](
-          IO {
-            completedFromResourceAcquire = Some(true)
-            "test"
-          }
-        )(_ =>
-          IO {
-            completedFromResourceRelease = Some(true)
-          }
-        )
+        .make[IO, Unit](
+          counter.getAndUpdate(_ + 1).flatMap(i => IO(this.acquired = Some(i)))
+        )(_ => counter.getAndUpdate(_ + 1).flatMap(i => IO(this.released = Some(i))))
     )
 
   override def afterAll(): Unit = {
-    // resource was created before setup
-    assertEquals(completedFromResourceAcquire, Some(false))
-    // resource was released after teardown
-    assertEquals(completedFromResourceRelease, Some(true))
-    // promise was completed first by the test
-    assertEquals(completedFromTest, Some(true))
+    // resource was acquired first
+    assertEquals(acquired, Some(0))
+    // then the test was run
+    assertEquals(tested, Some(1))
+    // then it was released
+    assertEquals(released, Some(2))
   }
 
-  latchOnTeardown.test("teardown runs only after test completes") { _ =>
+  countingFixture.test("fixture runs before/after test") { _ =>
     // Simulate some work here, which increases the certainty that this test
     // will fail by design and not by lucky scheduling if the happens-before
     // relationship between the test and teardown is removed.
-    IO.sleep(50.millis).flatTap { _ =>
-      IO {
-        completedFromTest = Some(latch.trySuccess(()))
-      }
-    }
+    IO.sleep(50.millis) *> counter.getAndUpdate(_ + 1).flatMap(i => IO(this.tested = Some(i)))
   }
 }
