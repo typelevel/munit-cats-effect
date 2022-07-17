@@ -3,7 +3,7 @@ ThisBuild / tlBaseVersion := "1.0"
 ThisBuild / developers += tlGitHubDev("milanvdm", "Milan van der Meer")
 ThisBuild / startYear := Some(2021)
 
-ThisBuild / crossScalaVersions := List("3.0.2", "2.12.16", "2.13.8")
+ThisBuild / crossScalaVersions := List("3.1.3", "2.12.16", "2.13.8")
 
 ThisBuild / tlFatalWarningsInCi := false
 
@@ -24,7 +24,7 @@ lazy val ce3 = crossProject(JSPlatform, JVMPlatform)
   .settings(
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "0.7.29",
-      "org.typelevel" %%% "cats-effect" % "3.3.12"
+      "org.typelevel" %%% "cats-effect" % "3.3.14"
     ),
     // we are checking binary compatibility from the 1.0.6 version
     mimaPreviousArtifacts ~= {
