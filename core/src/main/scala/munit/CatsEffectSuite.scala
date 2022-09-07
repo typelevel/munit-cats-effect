@@ -19,7 +19,9 @@ package munit
 import cats.effect.unsafe.IORuntime
 import cats.effect.{IO, SyncIO}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.annotation.nowarn
+import scala.concurrent.{ExecutionContext, Future, TimeoutException}
+import scala.concurrent.duration._
 import munit.internal.NestingChecks.{checkNestingIO, checkNestingSyncIO}
 
 abstract class CatsEffectSuite
@@ -28,9 +30,16 @@ abstract class CatsEffectSuite
     with CatsEffectFixtures
     with CatsEffectFunFixtures {
 
-  implicit def munitIoRuntime: IORuntime = IORuntime.global
+  @deprecated("Use munitIORuntime", "2.0.0")
+  def munitIoRuntime: IORuntime = IORuntime.global
+  implicit def munitIORuntime: IORuntime = munitIoRuntime: @nowarn
 
-  override implicit val munitExecutionContext: ExecutionContext = munitIoRuntime.compute
+  override implicit def munitExecutionContext: ExecutionContext = munitIORuntime.compute
+
+  def munitIOTimeout: Duration = 30.seconds
+
+  // buys us a 1s window to cancel the IO, before munit cancels the Future
+  override def munitTimeout: Duration = munitIOTimeout + 1.second
 
   override def munitValueTransforms: List[ValueTransform] =
     super.munitValueTransforms ++ List(munitIOTransform, munitSyncIOTransform)
@@ -38,7 +47,20 @@ abstract class CatsEffectSuite
   private val munitIOTransform: ValueTransform =
     new ValueTransform(
       "IO",
-      { case e: IO[_] => checkNestingIO(e).unsafeToFuture() }
+      { case e: IO[_] =>
+        val unnestedIO = checkNestingIO(e)
+
+        // TODO cleanup after CE 3.4.0 is released
+        val fd = Some(munitIOTimeout).collect { case fd: FiniteDuration => fd }
+        val timedIO = fd.fold(unnestedIO) { duration =>
+          unnestedIO.timeoutTo(
+            duration,
+            IO.raiseError(new TimeoutException(s"test timed out after $duration"))
+          )
+        }
+
+        timedIO.unsafeToFuture()
+      }
     )
 
   private val munitSyncIOTransform: ValueTransform =

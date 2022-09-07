@@ -18,8 +18,14 @@ package munit
 
 import cats.effect.{IO, SyncIO}
 import scala.concurrent.Future
+import scala.concurrent.duration._
 
 class CatsEffectSuiteSpec extends CatsEffectSuite {
+
+  override def munitIOTimeout = 100.millis
+  override def munitTimeout = Int.MaxValue.nanos // so only our timeout is in effect
+
+  test("times out".fail) { IO.sleep(1.second) }
 
   test("nested IO fail".fail) { IO(IO(1)) }
   test("nested IO and SyncIO fail".fail) { IO(SyncIO(1)) }
