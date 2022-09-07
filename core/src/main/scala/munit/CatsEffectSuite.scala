@@ -37,7 +37,7 @@ abstract class CatsEffectSuite
   override implicit def munitExecutionContext: ExecutionContext = munitIORuntime.compute
 
   /** The timeout for [[cats.effect.IO IO]]-based tests. When it expires it will gracefully cancel
-    * the fiber running the test and invoke any finalizers.
+    * the fiber running the test and invoke any finalizers before ultimately failing the test.
     *
     * Note that the fiber may still hang while running finalizers or even be uncancelable. In this
     * case the [[munitTimeout]] will take effect, with the caveat that the hanging fiber will be
@@ -49,9 +49,9 @@ abstract class CatsEffectSuite
     * [[scala.concurrent.Future Future]] or synchronous code. This is implemented by the MUnit
     * framework itself.
     *
-    * When this timeout expires, the suite will proceed without waiting for cancelation of the test
-    * or even attempting to cancel it. For that reason it is recommended to set this to a greater
-    * value than [[munitIOTimeout]], which performs graceful cancelation of
+    * When this timeout expires, the suite will immediately fail the test and proceed without
+    * waiting for its cancelation or even attempting to cancel it. For that reason it is recommended
+    * to set this to a greater value than [[munitIOTimeout]], which performs graceful cancelation of
     * [[cats.effect.IO IO]]-based tests. The default grace period for cancelation is 1 second.
     */
   override def munitTimeout: Duration = munitIOTimeout + 1.second
