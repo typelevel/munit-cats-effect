@@ -54,6 +54,11 @@ abstract class CatsEffectSuite
     * to set this to a greater value than [[munitIOTimeout]], which performs graceful cancelation of
     * [[cats.effect.IO IO]]-based tests. The default grace period for cancelation is 1 second.
     */
+  @deprecatedOverriding(
+    "Override munitIOTimeout instead. This method will not be finalized, but the only reason to" +
+      "override it would be to adjust the grace period for fiber cancelation (default 1 second).",
+    "2.0.0"
+  )
   override def munitTimeout: Duration = munitIOTimeout + 1.second
 
   override def munitValueTransforms: List[ValueTransform] =
