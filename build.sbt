@@ -12,13 +12,13 @@ lazy val docs = project
 
 lazy val root = tlCrossRootProject.aggregate(core)
 
-lazy val core = crossProject(JSPlatform, JVMPlatform)
+lazy val core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .crossType(CrossType.Pure)
   .in(file("core"))
   .settings(
     name := "munit-cats-effect",
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "1.0.0-M6",
-      "org.typelevel" %%% "cats-effect" % "3.3.14"
+      "org.typelevel" %%% "cats-effect" % "3.3.14-1-5d11fe9"
     )
   )
