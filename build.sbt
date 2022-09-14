@@ -12,7 +12,7 @@ lazy val docs = project
 
 lazy val root = tlCrossRootProject.aggregate(core)
 
-lazy val core = crossProject(JSPlatform, JVMPlatform)
+lazy val core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .crossType(CrossType.Pure)
   .in(file("core"))
   .settings(
