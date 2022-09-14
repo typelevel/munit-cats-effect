@@ -17,12 +17,15 @@
 package munit
 
 import cats.effect.{IO, SyncIO}
+import scala.annotation.nowarn
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
 class CatsEffectSuiteSpec extends CatsEffectSuite {
 
   override def munitIOTimeout = 100.millis
+
+  @nowarn
   override def munitTimeout = Int.MaxValue.nanos // so only our timeout is in effect
 
   test("times out".fail) { IO.sleep(1.second) }
