@@ -128,7 +128,7 @@
 
   </span><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.</span><span class="identifier">effect</span><span>.</span><span class="identifier">std</span><span>.</span><span class="type-name">Dispatcher</span><span>
 
-  </span><span class="keyword">val</span><span> </span><span class="identifier">dispatcher</span><span> = </span><span class="type-name">ResourceFunFixture</span><span>(</span><span class="type-name">Dispatcher</span><span>[</span><span class="type-name">IO</span><span>])
+  </span><span class="keyword">val</span><span> </span><span class="identifier">dispatcher</span><span> = </span><span class="type-name">ResourceFunFixture</span><span>(</span><span class="type-name">Dispatcher</span><span>.</span><span class="identifier">parallel</span><span>[</span><span class="type-name">IO</span><span>])
 
   </span><span class="identifier">dispatcher</span><span>.</span><span class="identifier">test</span><span>(</span><span class="string-literal">&quot;resources can be lifted to munit fixtures&quot;</span><span>) { </span><span class="identifier">dsp</span><span> =&gt;
     </span><span class="identifier">dsp</span><span>.</span><span class="identifier">unsafeRunAndForget</span><span>(</span><span class="type-name">IO</span><span>(</span><span class="number-literal">42</span><span>))
