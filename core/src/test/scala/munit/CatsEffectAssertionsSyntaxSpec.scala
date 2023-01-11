@@ -37,6 +37,18 @@ class CatsEffectAssertionsSyntaxSpec extends CatsEffectSuite {
     io assertEquals 3
   }
 
+  test("assert predicate (for IO) works (successful assertion)") {
+    val io = IO.sleep(2.millis) *> IO(2)
+
+    io assert (_ < 3)
+  }
+
+  test("assert predicate (for IO) works (failed assertion)".fail) {
+    val io = IO.sleep(2.millis) *> IO(2)
+
+    io assert (_ > 3)
+  }
+
   test("assert (for IO[Boolean]) works (successful assertion)") {
     val io = IO.sleep(2.millis) *> IO(true)
 
@@ -119,6 +131,18 @@ class CatsEffectAssertionsSyntaxSpec extends CatsEffectSuite {
     val io = SyncIO(2)
 
     io assertEquals 3
+  }
+
+  test("assert predicate (for SyncIO) works (successful assertion)") {
+    val io = SyncIO(2)
+
+    io assert (_ < 3)
+  }
+
+  test("assert predicate (for SyncIO) works (failed assertion)".fail) {
+    val io = SyncIO(2)
+
+    io assert (_ > 3)
   }
 
   test("assert (for SyncIO[Unit]) works (successful assertion)") {
