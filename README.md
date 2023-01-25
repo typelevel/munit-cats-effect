@@ -13,7 +13,7 @@ libraryDependencies += "org.typelevel" %%% "munit-cats-effect-2" % version % "te
 Cats Effect 3 integration is provided via:
 
 ```scala
-libraryDependencies += "org.typelevel" %%% "munit-cats-effect-3" % version % "test"
+libraryDependencies += "org.typelevel" %%% "munit-cats-effect" % version % "test"
 ```
 
 Builds are available for Scala 2.12, 2.13, and 3 for both the JVM and Scala.js.
