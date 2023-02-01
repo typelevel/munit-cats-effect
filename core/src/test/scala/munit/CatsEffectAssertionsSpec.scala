@@ -47,6 +47,17 @@ class CatsEffectAssertionsSpec extends CatsEffectSuite {
     assertIO_(io)
   }
 
+  test("assertIOBoolean works (successful assertion)") {
+    val io = IO.sleep(2.millis) *> IO(true)
+
+    assertIOBoolean(io)
+  }
+  test("assertIOBoolean works (failed assertion)".fail) {
+    val io = IO.sleep(2.millis) *> IO(false)
+
+    assertIOBoolean(io)
+  }
+
   test("interceptIO works (successful assertion)") {
     val io = exception.raiseError[IO, Unit]
 
@@ -117,6 +128,17 @@ class CatsEffectAssertionsSpec extends CatsEffectSuite {
     val io = SyncIO.raiseError[Unit](exception)
 
     assertSyncIO_(io)
+  }
+
+  test("assertSyncIOBoolean works (successful assertion)") {
+    val io = SyncIO(true)
+
+    assertSyncIOBoolean(io)
+  }
+  test("assertSyncIOBoolean works (failed assertion)".fail) {
+    val io = SyncIO(false)
+
+    assertSyncIOBoolean(io)
   }
 
   test("interceptSyncIO works (successful assertion)") {

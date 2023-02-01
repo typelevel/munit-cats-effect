@@ -182,6 +182,27 @@ trait CatsEffectAssertions { self: Assertions =>
   )(implicit loc: Location): SyncIO[Unit] =
     obtained.flatMap(a => SyncIO(assertEquals(a, (), clue)))
 
+  /** Asserts that a `SyncIO[Boolean]` returns true.
+    *
+    * For example:
+    * {{{
+    *   assertSyncIOBoolean(SyncIO(true))
+    * }}}
+    *
+    * The "clue" value can be used to give extra information about the failure in case the assertion
+    * fails.
+    *
+    * @param obtained
+    *   the SyncIO[Boolean] under testing
+    * @param clue
+    *   a value that will be printed in case the assertions fails
+    */
+  protected def assertSyncIOBoolean(
+      obtained: SyncIO[Boolean],
+      clue: => Any = "values are not the same"
+  )(implicit loc: Location): SyncIO[Unit] =
+    assertSyncIO(obtained, true, clue)
+
   /** Intercepts a `Throwable` being thrown inside the provided `SyncIO`.
     *
     * @example
@@ -295,6 +316,25 @@ trait CatsEffectAssertions { self: Assertions =>
     )(implicit loc: Location, ev: B <:< A): IO[Unit] =
       assertIO(io, expected, clue)
 
+    /** Asserts that this effect satisfies a given predicate.
+      *
+      * {{{
+      *  IO.pure(1).assert(_ > 0)
+      * }}}
+      *
+      * The "clue" value can be used to give extra information about the failure in case the
+      * assertion fails.
+      *
+      * @param pred
+      *   the predicate that must be satisfied
+      * @param clue
+      *   a value that will be printed in case the assertions fails
+      */
+    def assert(pred: A => Boolean, clue: => Any = "predicate not satisfied")(implicit
+        loc: Location
+    ): IO[Unit] =
+      assertIOBoolean(io.map(pred), clue)
+
     /** Intercepts a `Throwable` being thrown inside this effect.
       *
       * @example
@@ -373,6 +413,25 @@ trait CatsEffectAssertions { self: Assertions =>
         clue: => Any = "values are not the same"
     )(implicit loc: Location, ev: B <:< A): SyncIO[Unit] =
       assertSyncIO(io, expected, clue)
+
+    /** Asserts that this effect satisfies a given predicate.
+      *
+      * {{{
+      *  SyncIO.pure(1).assert(_ > 0)
+      * }}}
+      *
+      * The "clue" value can be used to give extra information about the failure in case the
+      * assertion fails.
+      *
+      * @param pred
+      *   the predicate that must be satisfied
+      * @param clue
+      *   a value that will be printed in case the assertions fails
+      */
+    def assert(pred: A => Boolean, clue: => Any = "predicate not satisfied")(implicit
+        loc: Location
+    ): SyncIO[Unit] =
+      assertSyncIOBoolean(io.map(pred), clue)
 
     /** Intercepts a `Throwable` being thrown inside this effect.
       *
