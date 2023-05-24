@@ -136,7 +136,7 @@ class SuiteLocalExampleSuite extends CatsEffectSuite {
   
   test("third test") {
     IO(tempFileFixture()).flatMap { file =>
-      assertIO(Files[IO].exists(file), true)
+      Files[IO].exists(file).assert
     }
   }
 
