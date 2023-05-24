@@ -116,7 +116,7 @@ class SuiteLocalExampleSuite extends CatsEffectSuite {
 
   val myFixture = ResourceSuiteLocalFixture(
     "my-fixture",
-    Files[IO].tempFile
+    Resource.make(IO.unit)(_ => IO.unit)
   )
   
   val tempFileFixture = ResourceSuitLocalFixture(
