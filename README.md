@@ -110,6 +110,7 @@ MUnit supports reusable suite-local fixtures that are instantiated only once for
 
 ```scala
 import cats.effect.{IO, Resource}
+import fs2.io.file.Files
 
 class SuiteLocalExampleSuite extends CatsEffectSuite {
 
@@ -117,8 +118,13 @@ class SuiteLocalExampleSuite extends CatsEffectSuite {
     "my-fixture",
     Resource.make(IO.unit)(_ => IO.unit)
   )
+  
+  val tempFileFixture = ResourceSuitLocalFixture(
+    "temp-file",
+    Files[IO].tempFile
+  )
 
-  override def munitFixtures = List(myFixture)
+  override def munitFixtures = List(myFixture, tempFileFixture)
 
   test("first test") {
     IO(myFixture()).assertEquals(())
@@ -126,6 +132,12 @@ class SuiteLocalExampleSuite extends CatsEffectSuite {
 
   test("second test") {
     IO(myFixture()).assertEquals(())
+  }
+  
+  test("third test") {
+    IO(tempFileFixture()).flatMap { file =>
+      Files[IO].exists(file).assert
+    }
   }
 
 }
