@@ -7,7 +7,7 @@ Integration library for [MUnit](https://scalameta.org/munit/) and [cats-effect](
 ### For versions `2.0.0-M1` and above:
 
 ```scala
-libraryDependencies += "org.typelevel" %%% "munit-cats-effect" % "@version@" % "test"
+libraryDependencies += "org.typelevel" %%% "munit-cats-effect" % "@VERSION@" % "test"
 ```
 
 > Please note that only Cats Effect 3 is supported for versions `2.0.0-M1` and above.
