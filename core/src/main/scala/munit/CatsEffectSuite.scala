@@ -70,14 +70,10 @@ abstract class CatsEffectSuite
       { case e: IO[_] =>
         val unnestedIO = checkNestingIO(e)
 
-        // TODO cleanup after CE 3.4.0 is released
-        val fd = Some(munitIOTimeout).collect { case fd: FiniteDuration => fd }
-        val timedIO = fd.fold(unnestedIO) { duration =>
-          unnestedIO.timeoutTo(
-            duration,
-            IO.raiseError(new TimeoutException(s"test timed out after $duration"))
-          )
-        }
+        val timedIO = unnestedIO.timeoutTo(
+          munitIOTimeout,
+          IO.raiseError(new TimeoutException(s"test timed out after $munitIOTimeout"))
+        )
 
         timedIO.unsafeToFuture()
       }
