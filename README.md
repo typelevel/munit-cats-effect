@@ -119,7 +119,7 @@ class SuiteLocalExampleSuite extends CatsEffectSuite {
     Resource.make(IO.unit)(_ => IO.unit)
   )
   
-  val tempFileFixture = ResourceSuitLocalFixture(
+  val tempFileFixture = ResourceSuiteLocalFixture(
     "temp-file",
     Files[IO].tempFile
   )
