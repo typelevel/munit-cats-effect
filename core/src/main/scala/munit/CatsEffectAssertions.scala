@@ -335,6 +335,48 @@ trait CatsEffectAssertions { self: Assertions =>
     ): IO[Unit] =
       assertIOBoolean(io.map(pred), clue)
 
+    /** Extracts a value from this effect for further processing or fails if the effect outcome
+      * can't be matched.
+      *
+      * This method can come in handy in complex scenarios when multi-step assertions are necessary.
+      * For example:
+      * {{{
+      *   case class Response(status: Int, body: IO[Array[Byte]])
+      *
+      *   def decodeResponseBytes(bytes: Array[Byte]): IO[String] = IO(String.fromBytes(bytes))
+      *
+      *   val response: IO[Response] =
+      *     IO.pure(Response(
+      *       status = 200,
+      *       body = IO {
+      *         "<expected response body>".getBytes("UTF-8")
+      *       }
+      *     ))
+      *
+      *    response
+      *      .collectOrFail { case Response(200, body) => body }
+      *      .flatMap(decodeResponseBytes)
+      *      .assertEquals("<expected response body>")
+      * }}}
+      *
+      * @param pf
+      *   a partial function that matches the value obtained from the effect
+      */
+    def collectOrFail[B](
+        pf: PartialFunction[A, B],
+        clue: => Any = "value didn't match any of the defined cases"
+    )(implicit loc: Location): IO[B] =
+      io.flatMap {
+        case `pf`(b) => IO.pure(b)
+        case a =>
+          IO.raiseError(
+            new FailException(
+              s"${munitPrint(clue)}, value obtained: $a",
+              location = loc
+            )
+          )
+      }
+
     /** Intercepts a `Throwable` being thrown inside this effect.
       *
       * @example
