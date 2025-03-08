@@ -366,14 +366,18 @@ trait CatsEffectAssertions { self: Assertions =>
         pf: PartialFunction[A, B],
         clue: => Any = "value didn't match any of the defined cases"
     )(implicit loc: Location): IO[B] =
-      io.flatMap {
-        case `pf`(b) => IO.pure(b)
-        case a =>
-          IO.raiseError(
-            new FailException(
-              s"${munitPrint(clue)}, value obtained: $a",
-              location = loc
-            )
+      io.flatMap { a =>
+        // It could be just "case `pf`(b) => IO.pure(b)" but 2.12 doesn't define `unapply` for `PartialFunction`.
+        pf.andThen(IO.pure[B])
+          .applyOrElse[A, IO[B]](
+            a,
+            aa =>
+              IO.raiseError(
+                new FailException(
+                  s"${munitPrint(clue)}, value obtained: $aa",
+                  location = loc
+                )
+              )
           )
       }
 
