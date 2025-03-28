@@ -335,15 +335,18 @@ trait CatsEffectAssertions { self: Assertions =>
     ): IO[Unit] =
       assertIOBoolean(io.map(pred), clue)
 
-    /** Extracts a value from this effect for further processing or fails if the effect outcome
-      * can't be matched.
+    /** Maps a value from this effect with a given `PartialFunction` or fails if the value doesn't
+      * match. Then the mapped value can be used for further processing or validation.
       *
-      * This method can come in handy in complex scenarios when multi-step assertions are necessary.
-      * For example:
-      * {{{
+      * This method can come in handy in complex validation scenarios where multi-step assertions
+      * are necessary.
+      *
+      * @example
+      *   {{{
       *   case class Response(status: Int, body: IO[Array[Byte]])
       *
-      *   def decodeResponseBytes(bytes: Array[Byte]): IO[String] = IO(String.fromBytes(bytes))
+      *   def decodeResponseBytes(bytes: IO[Array[Byte]]): IO[String] =
+      *     bytes.map(String.fromBytes(_))
       *
       *   val response: IO[Response] =
       *     IO.pure(Response(
@@ -354,15 +357,19 @@ trait CatsEffectAssertions { self: Assertions =>
       *     ))
       *
       *    response
-      *      .collectOrFail { case Response(200, body) => body }
+      *      // First, check if the response has the expected status,
+      *      // then pass it over to the next step for further processing.
+      *      .mapOrFail { case Response(200, body) => body }
+      *      // Decode the response body in order to prepare for the final check.
       *      .flatMap(decodeResponseBytes)
+      *      // Make sure that the response has the expected content.
       *      .assertEquals("<expected response body>")
-      * }}}
+      *   }}}
       *
       * @param pf
       *   a partial function that matches the value obtained from the effect
       */
-    def collectOrFail[B](
+    def mapOrFail[B](
         pf: PartialFunction[A, B],
         clue: => Any = "value didn't match any of the defined cases"
     )(implicit loc: Location): IO[B] =

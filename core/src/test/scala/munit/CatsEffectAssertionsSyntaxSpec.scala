@@ -73,24 +73,24 @@ class CatsEffectAssertionsSyntaxSpec extends CatsEffectSuite {
     io.assert
   }
 
-  test("collectOrFail (for IO) works (successful extraction)") {
+  test("mapOrFail (for IO) works (successful extraction)") {
     val io = IO.sleep(2.millis) *> IO.some(42)
 
-    io.collectOrFail { case Some(obtained) if obtained % 2 == 0 => obtained / 2 }
+    io.mapOrFail { case Some(obtained) if obtained % 2 == 0 => obtained / 2 }
       .assertEquals(21)
   }
 
-  test("collectOrFail (for IO) works (failed extraction)".fail) {
+  test("mapOrFail (for IO) works (failed extraction)".fail) {
     val io = IO.sleep(2.millis) *> IO.some(42)
 
-    io.collectOrFail { case Some(obtained) if obtained % 2 == 1 => () }
+    io.mapOrFail { case Some(obtained) if obtained % 2 == 1 => () }
   }
 
-  test("collectOrFail (for IO) works (failed extraction with clue)".fail) {
+  test("mapOrFail (for IO) works (failed extraction with clue)".fail) {
     val io = IO.sleep(2.millis) *> IO.some(42)
 
     // This test simply shows what the syntax looks like when a `clue` is provided.
-    io.collectOrFail(
+    io.mapOrFail(
       { case Some(obtained) if obtained % 2 == 1 => () },
       "the clue goes here"
     )
