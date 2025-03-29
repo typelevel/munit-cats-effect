@@ -73,6 +73,29 @@ class CatsEffectAssertionsSyntaxSpec extends CatsEffectSuite {
     io.assert
   }
 
+  test("mapOrFail (for IO) works (successful mapping)") {
+    val io = IO.sleep(2.millis) *> IO.some(42)
+
+    io.mapOrFail { case Some(obtained) if obtained % 2 == 0 => obtained / 2 }
+      .assertEquals(21)
+  }
+
+  test("mapOrFail (for IO) works (failed mapping)".fail) {
+    val io = IO.sleep(2.millis) *> IO.some(42)
+
+    io.mapOrFail { case Some(obtained) if obtained % 2 == 1 => () }
+  }
+
+  test("mapOrFail (for IO) works (failed mapping with clue)".fail) {
+    val io = IO.sleep(2.millis) *> IO.some(42)
+
+    // This test simply shows what the syntax looks like when a `clue` is provided.
+    io.mapOrFail(
+      { case Some(obtained) if obtained % 2 == 1 => () },
+      "the clue goes here"
+    )
+  }
+
   test("intercept (for IO) works (successful assertion)") {
     val io = exception.raiseError[IO, Unit]
 
@@ -155,6 +178,29 @@ class CatsEffectAssertionsSyntaxSpec extends CatsEffectSuite {
     val io = SyncIO.raiseError[Unit](exception)
 
     io.assert
+  }
+
+  test("mapOrFail (for SyncIO) works (successful mapping)") {
+    val io = SyncIO.pure(Some(42))
+
+    io.mapOrFail { case Some(obtained) if obtained % 2 == 0 => obtained / 2 }
+      .assertEquals(21)
+  }
+
+  test("mapOrFail (for SyncIO) works (failed mapping)".fail) {
+    val io = SyncIO.pure(Some(42))
+
+    io.mapOrFail { case Some(obtained) if obtained % 2 == 1 => () }
+  }
+
+  test("mapOrFail (for SyncIO) works (failed mapping with clue)".fail) {
+    val io = SyncIO.pure(Some(42))
+
+    // This test simply shows what the syntax looks like when a `clue` is provided.
+    io.mapOrFail(
+      { case Some(obtained) if obtained % 2 == 1 => () },
+      "the clue goes here"
+    )
   }
 
   test("intercept (for SyncIO) works (successful assertion)") {
