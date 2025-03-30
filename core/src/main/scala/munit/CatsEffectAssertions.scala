@@ -291,6 +291,26 @@ trait CatsEffectAssertions { self: Assertions =>
       Sync[F].raiseError[T](e)
   }
 
+  private def mapOrFailF[F[_], A, B](
+      io: F[A],
+      pf: PartialFunction[A, B],
+      clue: => Any
+  )(implicit F: Sync[F], loc: Location): F[B] =
+    F.flatMap(io) { a =>
+      // It could be just "case `pf`(b) => F.pure(b)" but 2.12 doesn't define `unapply` for `PartialFunction`.
+      pf.andThen(F.pure[B])
+        .applyOrElse[A, F[B]](
+          a,
+          aa =>
+            F.raiseError(
+              new FailException(
+                s"${munitPrint(clue)}, value obtained: $aa",
+                location = loc
+              )
+            )
+        )
+    }
+
   implicit class MUnitCatsAssertionsForIOOps[A](io: IO[A]) {
 
     /** Asserts that this effect returns an expected value.
@@ -334,6 +354,46 @@ trait CatsEffectAssertions { self: Assertions =>
         loc: Location
     ): IO[Unit] =
       assertIOBoolean(io.map(pred), clue)
+
+    /** Maps a value from this effect with a given `PartialFunction` or fails if the value doesn't
+      * match. Then the mapped value can be used for further processing or validation.
+      *
+      * This method can come in handy in complex validation scenarios where multi-step assertions
+      * are necessary.
+      *
+      * @example
+      *   {{{
+      *   case class Response(status: Int, body: IO[Array[Byte]])
+      *
+      *   def decodeResponseBytes(bytes: IO[Array[Byte]]): IO[String] =
+      *     bytes.map(String.fromBytes(_))
+      *
+      *   val response: IO[Response] =
+      *     IO.pure(Response(
+      *       status = 200,
+      *       body = IO {
+      *         "<expected response body>".getBytes("UTF-8")
+      *       }
+      *     ))
+      *
+      *    response
+      *      // First, check if the response has the expected status,
+      *      // then pass it over to the next step for further processing.
+      *      .mapOrFail { case Response(200, body) => body }
+      *      // Decode the response body in order to prepare for the final check.
+      *      .flatMap(decodeResponseBytes)
+      *      // Make sure that the response has the expected content.
+      *      .assertEquals("<expected response body>")
+      *   }}}
+      *
+      * @param pf
+      *   a partial function that matches the value obtained from the effect
+      */
+    def mapOrFail[B](
+        pf: PartialFunction[A, B],
+        clue: => Any = "value didn't match any of the defined cases"
+    )(implicit loc: Location): IO[B] =
+      mapOrFailF(io, pf, clue)
 
     /** Intercepts a `Throwable` being thrown inside this effect.
       *
@@ -432,6 +492,46 @@ trait CatsEffectAssertions { self: Assertions =>
         loc: Location
     ): SyncIO[Unit] =
       assertSyncIOBoolean(io.map(pred), clue)
+
+    /** Maps a value from this effect with a given `PartialFunction` or fails if the value doesn't
+      * match. Then the mapped value can be used for further processing or validation.
+      *
+      * This method can come in handy in complex validation scenarios where multi-step assertions
+      * are necessary.
+      *
+      * @example
+      *   {{{
+      *   case class Response(status: Int, body: SyncIO[Array[Byte]])
+      *
+      *   def decodeResponseBytes(bytes: SyncIO[Array[Byte]]): SyncIO[String] =
+      *     bytes.map(String.fromBytes(_))
+      *
+      *   val response: SyncIO[Response] =
+      *     SyncIO.pure(Response(
+      *       status = 200,
+      *       body = SyncIO {
+      *         "<expected response body>".getBytes("UTF-8")
+      *       }
+      *     ))
+      *
+      *    response
+      *      // First, check if the response has the expected status,
+      *      // then pass it over to the next step for further processing.
+      *      .mapOrFail { case Response(200, body) => body }
+      *      // Decode the response body in order to prepare for the final check.
+      *      .flatMap(decodeResponseBytes)
+      *      // Make sure that the response has the expected content.
+      *      .assertEquals("<expected response body>")
+      *   }}}
+      *
+      * @param pf
+      *   a partial function that matches the value obtained from the effect
+      */
+    def mapOrFail[B](
+        pf: PartialFunction[A, B],
+        clue: => Any = "value didn't match any of the defined cases"
+    )(implicit loc: Location): SyncIO[B] =
+      mapOrFailF(io, pf, clue)
 
     /** Intercepts a `Throwable` being thrown inside this effect.
       *
