@@ -1,4 +1,4 @@
-ThisBuild / tlBaseVersion := "2.1"
+ThisBuild / tlBaseVersion := "2.2"
 
 ThisBuild / developers += tlGitHubDev("milanvdm", "Milan van der Meer")
 ThisBuild / startYear := Some(2021)
