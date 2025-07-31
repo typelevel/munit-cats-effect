@@ -1,3 +1,5 @@
+import com.typesafe.tools.mima.core._
+
 ThisBuild / tlBaseVersion := "2.2"
 
 ThisBuild / developers += tlGitHubDev("milanvdm", "Milan van der Meer")
@@ -20,5 +22,17 @@ lazy val core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "1.1.1",
       "org.typelevel" %%% "cats-effect" % "3.7.0-RC1"
+    ),
+    mimaBinaryIssueFilters ++= Seq(
+      // false-positive. methods were deprecated in munit 1.0.4, they are still there but with different signature
+      ProblemFilters.exclude[DirectMissingMethodProblem]("munit.CatsEffectAssertions.assertEquals"),
+      ProblemFilters.exclude[DirectMissingMethodProblem]("munit.CatsEffectAssertions.assertNoDiff"),
+      ProblemFilters.exclude[DirectMissingMethodProblem]("munit.CatsEffectAssertions.fail"),
+      ProblemFilters
+        .exclude[DirectMissingMethodProblem]("munit.CatsEffectAssertions.failComparison"),
+      ProblemFilters.exclude[DirectMissingMethodProblem]("munit.CatsEffectAssertions.failSuite")
     )
+  )
+  .nativeSettings(
+    tlVersionIntroduced := List("2.12", "2.13", "3").map(_ -> "2.2.0").toMap
   )
