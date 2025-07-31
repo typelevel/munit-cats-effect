@@ -3,7 +3,7 @@ ThisBuild / tlBaseVersion := "2.1"
 ThisBuild / developers += tlGitHubDev("milanvdm", "Milan van der Meer")
 ThisBuild / startYear := Some(2021)
 
-ThisBuild / crossScalaVersions := List("3.3.5", "2.12.20", "2.13.16")
+ThisBuild / crossScalaVersions := List("3.3.6", "2.12.20", "2.13.16")
 
 lazy val docs = project
   .in(file("site"))
@@ -19,6 +19,6 @@ lazy val core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     name := "munit-cats-effect",
     libraryDependencies ++= Seq(
       "org.scalameta" %%% "munit" % "1.1.0",
-      "org.typelevel" %%% "cats-effect" % "3.7-4972921"
+      "org.typelevel" %%% "cats-effect" % "3.7.0-RC1"
     )
   )
