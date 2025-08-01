@@ -1,6 +1,6 @@
 import com.typesafe.tools.mima.core._
 
-ThisBuild / tlBaseVersion := "2.2"
+ThisBuild / tlBaseVersion := "2.3"
 
 ThisBuild / developers += tlGitHubDev("milanvdm", "Milan van der Meer")
 ThisBuild / startYear := Some(2021)
