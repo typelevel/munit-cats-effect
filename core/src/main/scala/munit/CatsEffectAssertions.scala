@@ -298,7 +298,7 @@ trait CatsEffectAssertions { self: Assertions =>
   )(implicit F: Sync[F], loc: Location): F[B] =
     F.flatMap(io) { a =>
       // It could be just "case `pf`(b) => F.pure(b)" but 2.12 doesn't define `unapply` for `PartialFunction`.
-      pf.andThen(F.pure[B])
+      pf.andThen(F.pure[B] _)
         .applyOrElse[A, F[B]](
           a,
           aa =>
