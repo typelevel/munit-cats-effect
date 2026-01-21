@@ -16,8 +16,9 @@
 
 package munit.internal
 
-import cats.effect.{IO, SyncIO}
-import cats.syntax.all._
+import cats.effect.{IO, ResourceIO, SyncIO}
+import cats.syntax.all.*
+
 import scala.concurrent.Future
 
 private[munit] object NestingChecks {
@@ -41,6 +42,11 @@ private[munit] object NestingChecks {
           "your test returns an `IO[IO[_]]`, which means the inner `IO` will not execute." ++
             " Call `.flatten` if you want it to execute, or `.void` if you want to discard it"
         )
+      case _: ResourceIO[_] =>
+        err(
+          "your test returns an `IO[ResourceIO[_]]`, which means the inner `ResourceIO` will not execute." ++
+            " Call `.flatMap(_.use_)` if you want it to execute, or `.void` if you want to discard it"
+        )
       case _: SyncIO[_] =>
         err(
           "your test returns an `IO[SyncIO[_]]`, which means the inner `SyncIO` will not execute." ++
@@ -55,6 +61,35 @@ private[munit] object NestingChecks {
     }
   }
 
+  // same as above, but for ResourceIO
+  def checkNestingResourceIO(fa: ResourceIO[_]): ResourceIO[Any] = {
+    def err(msg: String) = IO.raiseError[Any](new Exception(msg)).toResource
+
+    fa.flatMap {
+      case _: IO[_] =>
+        err(
+          "your test returns a `ResourceIO[IO[_]]`, which means the inner `IO` will not execute." ++
+            " Call `.flatMap(_.toResource)` if you want it to execute, or `.void` if you want to discard it"
+        )
+      case _: ResourceIO[_] =>
+        err(
+          "your test returns a `ResourceIO[ResourceIO[_]]`, which means the inner `ResourceIO` will not execute." ++
+            " Call `.flatten` if you want it to execute, or `.void` if you want to discard it"
+        )
+      case _: SyncIO[_] =>
+        err(
+          "your test returns a `ResourceIO[SyncIO[_]]`, which means the inner `SyncIO` will not execute." ++
+            " Call `.flatMap(_.to[IO].toResource)` if you want it to execute, or `.void` if you want to discard it"
+        )
+      case _: Future[_] =>
+        err(
+          "your test returns a `ResourceIO[Future[_]]`, which means the inner `Future` might not execute." ++
+            " Change it to `_.flatMap(x => IO.fromFuture(IO.pure(x)).toResource)` if you want it to execute, or call `.void` if you want to discard it"
+        )
+      case v => v.pure[ResourceIO]
+    }
+  }
+
   // same as above, but for SyncIO
   def checkNestingSyncIO(fa: SyncIO[_]): SyncIO[Any] = {
     def err(msg: String) = SyncIO.raiseError[Any](new Exception(msg))
@@ -64,6 +99,11 @@ private[munit] object NestingChecks {
         err(
           "your test returns a `SyncIO[IO[_]]`, which means the inner `IO` will not execute." ++
             " Call `.to[IO].flatten` if you want it to execute, or `.void` if you want to discard it"
+        )
+      case _: ResourceIO[_] =>
+        err(
+          "your test returns an `SyncIO[ResourceIO[_]]`, which means the inner `ResourceIO` will not execute." ++
+            " Call `.to[IO].flatMap(_.use_)` if you want it to execute, or `.void` if you want to discard it"
         )
       case _: SyncIO[_] =>
         err(
