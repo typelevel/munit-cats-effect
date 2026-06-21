@@ -5,7 +5,7 @@ ThisBuild / tlBaseVersion := "2.2"
 ThisBuild / developers += tlGitHubDev("milanvdm", "Milan van der Meer")
 ThisBuild / startYear := Some(2021)
 
-ThisBuild / crossScalaVersions := List("3.3.8", "2.12.21", "2.13.18")
+ThisBuild / crossScalaVersions := List("3.8.4", "2.12.21", "2.13.18")
 
 lazy val docs = project
   .in(file("site"))
