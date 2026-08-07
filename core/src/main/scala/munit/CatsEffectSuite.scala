@@ -17,12 +17,12 @@
 package munit
 
 import cats.effect.unsafe.IORuntime
-import cats.effect.{IO, SyncIO}
+import cats.effect.{IO, ResourceIO, SyncIO}
 
 import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future, TimeoutException}
-import scala.concurrent.duration._
-import munit.internal.NestingChecks.{checkNestingIO, checkNestingSyncIO}
+import scala.concurrent.duration.*
+import munit.internal.NestingChecks.{checkNestingIO, checkNestingSyncIO, checkNestingResourceIO}
 
 abstract class CatsEffectSuite
     extends FunSuite
@@ -62,7 +62,11 @@ abstract class CatsEffectSuite
   override def munitTimeout: Duration = munitIOTimeout + 1.second
 
   override def munitValueTransforms: List[ValueTransform] =
-    super.munitValueTransforms ++ List(munitIOTransform, munitSyncIOTransform)
+    super.munitValueTransforms ++ List(
+      munitIOTransform,
+      munitResourceIOTransform,
+      munitSyncIOTransform
+    )
 
   private val munitIOTransform: ValueTransform =
     new ValueTransform(
@@ -71,6 +75,21 @@ abstract class CatsEffectSuite
         val unnestedIO = checkNestingIO(e)
 
         val timedIO = unnestedIO.timeoutTo(
+          munitIOTimeout,
+          IO.raiseError(new TimeoutException(s"test timed out after $munitIOTimeout"))
+        )
+
+        timedIO.unsafeToFuture()
+      }
+    )
+
+  private val munitResourceIOTransform: ValueTransform =
+    new ValueTransform(
+      "ResourceIO",
+      { case e: ResourceIO[_] =>
+        val unnestedResourceIO = checkNestingResourceIO(e)
+
+        val timedIO = unnestedResourceIO.use_.timeoutTo(
           munitIOTimeout,
           IO.raiseError(new TimeoutException(s"test timed out after $munitIOTimeout"))
         )
