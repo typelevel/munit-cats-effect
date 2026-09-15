@@ -22,6 +22,8 @@ import scala.reflect.ClassTag
 import scala.util.control.NonFatal
 import cats.effect.SyncIO
 import cats.effect.Sync
+import munit.internal.console.StackTraces
+import org.junit.AssumptionViolatedException
 
 trait CatsEffectAssertions { self: Assertions =>
 
@@ -422,6 +424,33 @@ trait CatsEffectAssertions { self: Assertions =>
       interceptMessageIO[T](expectedExceptionMessage)(io)
 
   }
+
+  /** Assumes that an `IO[Boolean]` returns true, skipping the test instead of failing it if the
+    * assumption doesn't hold.
+    *
+    * For example:
+    * {{{
+    *   assumeIO(Env[IO].get("CI").map(_.isDefined))
+    * }}}
+    *
+    * Unlike the other assertions in this trait, a failed assumption raises an
+    * `AssumptionViolatedException`, which test frameworks report as a skipped test rather than a
+    * failure.
+    *
+    * The "clue" value can be used to give extra information about the failure in case the
+    * assumption fails.
+    *
+    * @param cond
+    *   the condition under testing
+    * @param clue
+    *   a value that will be printed in case the assumption fails
+    */
+  def assumeIO(cond: IO[Boolean], clue: => Any = "assumption failed"): IO[Unit] =
+    cond.flatMap {
+      IO.raiseUnless(_) {
+        StackTraces.dropInside(new AssumptionViolatedException(munitPrint(clue)))
+      }
+    }
 
   implicit class MUnitCatsAssertionsForIOUnitOps(io: IO[Unit]) {
 
