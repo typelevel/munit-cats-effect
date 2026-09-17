@@ -209,4 +209,24 @@ class CatsEffectAssertionsSpec extends CatsEffectSuite {
 
     interceptMessageIO[AssumptionViolatedException]("BOOM!")(assumeIO(cond, "BOOM!"))
   }
+
+  test("assumeSyncIO is a no-op when the condition is true") {
+    val cond = SyncIO.pure(true)
+
+    assumeSyncIO(cond)
+  }
+
+  test("assumeSyncIO raises AssumptionViolatedException when the condition is false") {
+    val cond = SyncIO.pure(false)
+
+    interceptSyncIO[AssumptionViolatedException](assumeSyncIO(cond))
+  }
+
+  test(
+    "assumeSyncIO raises AssumptionViolatedException with a message when the condition is false and a message is provided"
+  ) {
+    val cond = SyncIO.pure(false)
+
+    interceptMessageSyncIO[AssumptionViolatedException]("BOOM!")(assumeSyncIO(cond, "BOOM!"))
+  }
 }
