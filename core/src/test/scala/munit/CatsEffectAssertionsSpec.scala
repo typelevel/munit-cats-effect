@@ -20,6 +20,7 @@ import cats.effect.IO
 import cats.syntax.all._
 import scala.concurrent.duration._
 import cats.effect.SyncIO
+import org.junit.AssumptionViolatedException
 
 class CatsEffectAssertionsSpec extends CatsEffectSuite {
 
@@ -189,4 +190,23 @@ class CatsEffectAssertionsSpec extends CatsEffectSuite {
     interceptMessageSyncIO[IllegalArgumentException]("BOOM!")(io)
   }
 
+  test("assumeIO is a no-op when the condition is true") {
+    val cond = IO.pure(true)
+
+    assumeIO(cond)
+  }
+
+  test("assumeIO raises AssumptionViolatedException when the condition is false") {
+    val cond = IO.pure(false)
+
+    interceptIO[AssumptionViolatedException](assumeIO(cond))
+  }
+
+  test(
+    "assumeIO raises AssumptionViolatedException with a message when the condition is false and a message is provided"
+  ) {
+    val cond = IO.pure(false)
+
+    interceptMessageIO[AssumptionViolatedException]("BOOM!")(assumeIO(cond, "BOOM!"))
+  }
 }
