@@ -452,6 +452,34 @@ trait CatsEffectAssertions { self: Assertions =>
       }
     }
 
+  /** Assumes that a `SyncIO[Boolean]` returns true, skipping the test instead of failing it if the
+    * assumption doesn't hold.
+    *
+    * For example:
+    * {{{
+    *   assumeSyncIO(Env[SyncIO].get("CI").map(_.isDefined))
+    * }}}
+    *
+    * Unlike the other assertions in this trait, a failed assumption raises an
+    * `AssumptionViolatedException`, which test frameworks report as a skipped test rather than a
+    * failure.
+    *
+    * The "clue" value can be used to give extra information about the failure in case the
+    * assumption fails.
+    *
+    * @param cond
+    *   the condition under testing
+    * @param clue
+    *   a value that will be printed in case the assumption fails
+    */
+  def assumeSyncIO(cond: SyncIO[Boolean], clue: => Any = "assumption failed"): SyncIO[Unit] =
+    cond.flatMap { b =>
+      if (!b)
+        SyncIO.raiseError(StackTraces.dropInside(new AssumptionViolatedException(munitPrint(clue))))
+      else
+        SyncIO.unit
+    }
+
   implicit class MUnitCatsAssertionsForIOUnitOps(io: IO[Unit]) {
 
     /** Asserts that this effect returns the Unit value.
