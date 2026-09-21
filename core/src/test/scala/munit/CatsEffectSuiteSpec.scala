@@ -31,9 +31,18 @@ class CatsEffectSuiteSpec extends CatsEffectSuite {
   test("times out".fail) { IO.sleep(1.second) }
 
   test("nested IO fail".fail) { IO(IO(1)) }
+  test("nested IO and ResourceIO fail".fail) { IO(IO(1).toResource) }
   test("nested IO and SyncIO fail".fail) { IO(SyncIO(1)) }
   test("nested IO and Future fail".fail) { IO(Future.successful(1)) }
+
+  test("evaluates ResourceIO".fail) { IO.raiseError(new RuntimeException("hello")).toResource }
+  test("nested ResourceIO fail".fail) { IO(IO(1).toResource).toResource }
+  test("nested ResourceIO and IO".fail) { IO(IO(1)).toResource }
+  test("nested ResourceIO and SyncIO fail".fail) { IO(SyncIO(1)).toResource }
+  test("nested ResourceIO and Future fail".fail) { IO(Future.successful(1)).toResource }
+
   test("nested SyncIO fail".fail) { SyncIO(SyncIO(1)) }
   test("nested SyncIO and IO fail".fail) { SyncIO(IO(1)) }
+  test("nested SyncIO and ResourceIO fail".fail) { SyncIO(IO(1).toResource) }
   test("nested SyncIO and Future fail".fail) { SyncIO(Future.successful(1)) }
 }
