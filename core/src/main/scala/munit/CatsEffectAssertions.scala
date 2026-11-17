@@ -50,7 +50,7 @@ trait CatsEffectAssertions { self: Assertions =>
       obtained: IO[A],
       returns: B,
       clue: => Any = "values are not the same"
-  )(implicit loc: Location, ev: B <:< A): IO[Unit] =
+  )(implicit loc: Location, compare: Compare[A, B]): IO[Unit] =
     obtained.flatMap(a => IO(assertEquals(a, returns, clue)))
 
   /** Asserts that an `IO[Unit]` returns the Unit value.
@@ -160,7 +160,7 @@ trait CatsEffectAssertions { self: Assertions =>
       obtained: SyncIO[A],
       returns: B,
       clue: => Any = "values are not the same"
-  )(implicit loc: Location, ev: B <:< A): SyncIO[Unit] =
+  )(implicit loc: Location, compare: Compare[A, B]): SyncIO[Unit] =
     obtained.flatMap(a => SyncIO(assertEquals(a, returns, clue)))
 
   /** Asserts that a `SyncIO[Unit]` returns the Unit value.
@@ -335,7 +335,7 @@ trait CatsEffectAssertions { self: Assertions =>
     def assertEquals[B](
         expected: B,
         clue: => Any = "values are not the same"
-    )(implicit loc: Location, ev: B <:< A): IO[Unit] =
+    )(implicit loc: Location, compare: Compare[A, B]): IO[Unit] =
       assertIO(io, expected, clue)
 
     /** Asserts that this effect satisfies a given predicate.
@@ -528,7 +528,7 @@ trait CatsEffectAssertions { self: Assertions =>
     def assertEquals[B](
         expected: B,
         clue: => Any = "values are not the same"
-    )(implicit loc: Location, ev: B <:< A): SyncIO[Unit] =
+    )(implicit loc: Location, compare: Compare[A, B]): SyncIO[Unit] =
       assertSyncIO(io, expected, clue)
 
     /** Asserts that this effect satisfies a given predicate.

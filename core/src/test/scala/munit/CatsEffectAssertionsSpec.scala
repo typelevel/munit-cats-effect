@@ -37,6 +37,23 @@ class CatsEffectAssertionsSpec extends CatsEffectSuite {
     assertIO(io, returns = 3)
   }
 
+  test("assertIO works (custom Compare in scope)") {
+    implicit val compareIgnoringCase: Compare[String, String] =
+      (obtained: String, expected: String) => obtained.equalsIgnoreCase(expected)
+
+    val io = IO.sleep(2.millis) *> IO("HELLO")
+
+    assertIO(io, returns = "hello")
+  }
+  test("assertIO works (custom Compare in scope, failed assertion)".fail) {
+    implicit val compareIgnoringCase: Compare[String, String] =
+      (obtained: String, expected: String) => obtained.equalsIgnoreCase(expected)
+
+    val io = IO.sleep(2.millis) *> IO("HELLO")
+
+    assertIO(io, returns = "bye")
+  }
+
   test("assertIO_ works (successful assertion)") {
     val io = IO.sleep(2.millis) *> IO.unit
 
